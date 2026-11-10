@@ -21,7 +21,7 @@ export default function App() {
         </Routes>
       </main>
       <footer className="site-footer">
-        <span>LocalLoop</span>
+        <span>Community-Cart</span>
         <span>Good things, shared close to home.</span>
       </footer>
     </div>

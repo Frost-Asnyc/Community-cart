@@ -61,7 +61,7 @@ export default function Dashboard() {
     <div className="page-container dashboard-page">
       <div className="dashboard-hero">
         <div>
-          <p className="eyebrow">Your LocalLoop</p>
+          <p className="eyebrow">Your Community-Cart</p>
           <h1>My dashboard</h1>
           <p>Hi, {getCurrentUser().name}. Keep track of your listings and private activity.</p>
         </div>

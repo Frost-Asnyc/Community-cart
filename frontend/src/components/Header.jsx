@@ -16,9 +16,9 @@ export default function Header() {
   return (
     <header className="site-header">
       <div className="header-inner">
-        <NavLink className="brand" to="/" aria-label="LocalLoop home">
+        <NavLink className="brand" to="/" aria-label="Community-Cart home">
           <span className="brand-mark" aria-hidden="true">↗</span>
-          <span>LocalLoop</span>
+          <span>Community-Cart</span>
         </NavLink>
         <nav className="main-nav" aria-label="Main navigation">
           <NavLink to="/browse">Browse</NavLink>

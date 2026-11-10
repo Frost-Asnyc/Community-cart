@@ -2,10 +2,10 @@ const STORAGE_KEY = "localloop-demo-v1";
 const USER_KEY = "localloop-demo-user";
 
 export const DEMO_USERS = [
-  { id: "demo-user", name: "Alex Morgan" },
-  { id: "neighbor-1", name: "Jamie R." },
+  { id: "demo-user", name: "Sean Diddy Holmes" },
+  { id: "neighbor-1", name: "R.K Jelly" },
   { id: "neighbor-2", name: "Sam T." },
-  { id: "neighbor-3", name: "Taylor K." },
+  { id: "neighbor-3", name: "Elite Epstine." },
 ];
 
 export function getCurrentUser() {
@@ -37,7 +37,7 @@ function initialState() {
         image: "",
         artwork: "🚲",
         sellerId: "neighbor-1",
-        sellerName: "Jamie R.",
+        sellerName: "R.K Jelly",
         location: "Northside",
         deadline: daysFromNow(3),
         status: "active",
@@ -69,7 +69,7 @@ function initialState() {
         image: "",
         artwork: "📚",
         sellerId: "neighbor-3",
-        sellerName: "Taylor K.",
+        sellerName: "Elite Epstine.",
         location: "Riverside",
         deadline: daysFromNow(5),
         status: "active",
