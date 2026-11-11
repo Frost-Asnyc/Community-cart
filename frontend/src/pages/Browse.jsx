@@ -1,18 +1,39 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { getCategories, getFavoriteIds, getListings, toggleFavorite } from "../api/localLoopApi.js";
+import { getFavoriteIds, toggleFavorite } from "../api/localLoopApi.js";
+import { getListings as fetchListings } from "../api/fakeStoreApi.js";
 import FilterBar from "../search/FilterBar.jsx";
 import ProductCard from "../components/ProductCard.jsx";
 
 export default function Browse() {
-  const [listings, setListings] = useState(() => getListings());
-  const [categories] = useState(() => getCategories());
+  const [listings, setListings] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [favorites, setFavorites] = useState(() => getFavoriteIds());
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    fetchListings()
+      .then((items) => {
+        if (!active) return;
+        setListings(items);
+        setCategories([...new Set(items.map((listing) => listing.category))].sort());
+      })
+      .catch((requestError) => {
+        if (active) setError(requestError.message);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const filteredListings = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -113,7 +134,8 @@ export default function Browse() {
           <Link to="/dashboard">Your dashboard ↗</Link>
         </p>
         {error && <p className="form-feedback error-message" role="alert">{error}</p>}
-        {filteredListings.length === 0 && (
+        {loading && <p className="status-message">Loading community listings...</p>}
+        {filteredListings.length === 0 && !loading && !error && (
           <div className="empty-state">
             <span aria-hidden="true">⌕</span>
             <h3>No listings found</h3>

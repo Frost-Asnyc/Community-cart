@@ -11,17 +11,16 @@ npm install
 npm run dev
 ```
 
-## Demo behavior
+## Phase 1: Fake Store API
 
-The app uses realistic sample listings and stores demo listings, offers,
-favorites, and inquiries in browser `localStorage`. Use the account picker in
-the header to switch among demo identities and try buyer and seller workflows.
-Other buyers cannot see offers, and sellers see them only after the deadline.
-The dashboard then shows the highest offer, using the earliest timestamp to
-break a tie; buyers can always see their own offer. This is only a UI
-simulation: browser storage is inspectable and does not provide real privacy or
-access control. No email, authentication, or backend service is connected.
+Browse and listing details load products from
+[Fake Store API](https://fakestoreapi.com/). Creating, editing, and deleting
+products call its corresponding endpoints. Fake Store API simulates writes
+instead of persisting them, so the frontend keeps those changes in browser
+`localStorage` for this demo. Existing local sample listings remain available.
 
-The browser data layer is in `src/api/localLoopApi.js`. Replace that module's
-local-storage implementation with Flask requests when the endpoint shapes and
-authentication contract are ready.
+Offers, favorites, inquiries, demo identities, and LocalLoop-only listing
+metadata (such as neighborhood and offer deadline) still use browser storage.
+This is not real authentication or private sealed-offer storage: browser data
+is inspectable, and there is no email service or Flask backend connection yet.
+Phase 2 will replace the API adapter with the agreed Flask endpoint contract.

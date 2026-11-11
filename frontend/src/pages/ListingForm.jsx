@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
-  createListing,
-  getCategories,
   getCurrentUser,
-  getListing,
-  updateListing,
 } from "../api/localLoopApi.js";
+import {
+  createListing,
+  getListing,
+  getListings,
+  updateListing,
+} from "../api/fakeStoreApi.js";
 
 const emptyForm = {
   title: "",
@@ -34,45 +36,57 @@ export default function ListingForm() {
   const { listingId } = useParams();
   const navigate = useNavigate();
   const [form, setForm] = useState(emptyForm);
-  const [categories] = useState(() => getCategories());
+  const [categories, setCategories] = useState([]);
   const [minimumDeadline] = useState(getMinimumDeadline);
-  const [loading, setLoading] = useState(Boolean(listingId));
+  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!listingId) return;
-    try {
-      const listing = getListing(listingId);
-      if (!listing) {
-        setError("Listing not found.");
-      } else if (listing.sellerId !== getCurrentUser().id) {
-        setError("You can only edit listings owned by the selected demo account.");
-      } else if (listing.status !== "active" || Date.parse(listing.deadline) <= Date.now()) {
-        setError("Only listings before their offer deadline can be edited.");
-      } else {
-        setForm({
-          title: listing.title,
-          price: String(listing.price),
-          category: listing.category,
-          description: listing.description,
-          image: listing.image || "",
-          location: listing.location || "",
-          deadline: toLocalDateTime(listing.deadline),
-        });
+    let active = true;
+    async function loadForm() {
+      try {
+        const listings = await getListings();
+        if (!active) return;
+        setCategories([...new Set(listings.map((listing) => listing.category))].sort());
+        if (!listingId) return;
+
+        const listing = await getListing(listingId);
+        if (!active) return;
+        if (!listing) {
+          setError("Listing not found.");
+        } else if (listing.sellerId !== getCurrentUser().id) {
+          setError("You can only edit listings owned by the selected demo account.");
+        } else if (listing.status !== "active" || Date.parse(listing.deadline) <= Date.now()) {
+          setError("Only listings before their offer deadline can be edited.");
+        } else {
+          setForm({
+            title: listing.title,
+            price: String(listing.price),
+            category: listing.category,
+            description: listing.description,
+            image: listing.image || "",
+            location: listing.location || "",
+            deadline: toLocalDateTime(listing.deadline),
+          });
+        }
+      } catch (requestError) {
+        if (active) setError(requestError.message);
+      } finally {
+        if (active) setLoading(false);
       }
-    } catch (requestError) {
-      setError(requestError.message);
-    } finally {
-      setLoading(false);
     }
+    loadForm();
+    return () => {
+      active = false;
+    };
   }, [listingId]);
 
   function updateField(event) {
     setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     setSubmitting(true);
     setError("");
@@ -83,8 +97,8 @@ export default function ListingForm() {
         image: form.image.trim(),
       };
       const saved = listingId
-        ? updateListing(listingId, listingData)
-        : createListing(listingData);
+        ? await updateListing(listingId, listingData)
+        : await createListing(listingData);
       navigate(`/listings/${saved.id}`);
     } catch (requestError) {
       setError(requestError.message);
@@ -208,7 +222,7 @@ export default function ListingForm() {
             {!submitting && <span aria-hidden="true">↗</span>}
           </button>
           <p className="demo-caption">
-            Demo mode: listings are saved only in this browser.
+            Fake Store demo: product writes are simulated by the API and saved locally in this browser.
           </p>
         </form>
       </div>

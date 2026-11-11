@@ -14,6 +14,7 @@ npm install
 npm run dev
 ```
 
-The frontend currently uses realistic local demo data in browser storage. See
-[`frontend/README.md`](./frontend/README.md) for the demo workflows and the
-Flask integration boundary.
+The frontend loads its product catalog from Fake Store API and keeps
+LocalLoop-specific demo state in browser storage. Fake Store writes are
+simulated and overlaid locally. See [`frontend/README.md`](./frontend/README.md)
+for details and the Flask integration boundary.

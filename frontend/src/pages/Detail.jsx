@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
-  deleteListing,
   getCurrentUser,
   getDashboard,
   getFavoriteIds,
-  getListing,
   markListingSold,
   submitInquiry,
   submitOffer,
   toggleFavorite,
 } from "../api/localLoopApi.js";
+import {
+  deleteListing as deleteApiListing,
+  getListing as fetchListing,
+} from "../api/fakeStoreApi.js";
 
 function formatDeadline(deadline) {
   return new Intl.DateTimeFormat(undefined, {
@@ -28,22 +30,30 @@ export default function Detail() {
   const [feedback, setFeedback] = useState({ error: "", success: "" });
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    try {
-      const item = getListing(listingId);
-      if (item && item.sellerId === getCurrentUser().id) {
-        const ownedItem = getDashboard().listings.find((owned) => owned.id === listingId);
-        setListing({ ...item, sellerOffers: ownedItem?.offers ?? [] });
-      } else {
-        setListing(item);
-      }
-      setIsFavorite(getFavoriteIds().includes(listingId));
-    } catch (requestError) {
-      setFeedback({ error: requestError.message, success: "" });
-    } finally {
-      setLoading(false);
-    }
+    let active = true;
+    fetchListing(listingId)
+      .then((item) => {
+        if (!active) return;
+        if (item && item.sellerId === getCurrentUser().id) {
+          const ownedItem = getDashboard().listings.find((owned) => owned.id === listingId);
+          setListing({ ...item, sellerOffers: ownedItem?.offers ?? [] });
+        } else {
+          setListing(item);
+        }
+        setIsFavorite(getFavoriteIds().includes(listingId));
+      })
+      .catch((requestError) => {
+        if (active) setFeedback({ error: requestError.message, success: "" });
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
   }, [listingId]);
 
   if (loading) {
@@ -108,15 +118,18 @@ export default function Detail() {
     }
   }
 
-  function handleDelete() {
+  async function handleDelete() {
     if (!window.confirm("Delete this listing? This also removes its demo offers and inquiries.")) {
       return;
     }
+    setDeleting(true);
     try {
-      deleteListing(listingId);
+      await deleteApiListing(listingId);
       navigate("/dashboard");
     } catch (requestError) {
       showError(requestError);
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -186,8 +199,8 @@ export default function Detail() {
                   </Link>
                 )}
                 {listing.status === "active" && (
-                  <button className="button button-outline" type="button" onClick={handleDelete}>
-                    Delete
+                  <button className="button button-outline" type="button" onClick={handleDelete} disabled={deleting}>
+                    {deleting ? "Deleting..." : "Delete"}
                   </button>
                 )}
                 {listing.status === "active" && !isOpen && listing.sellerOffers?.length > 0 && (

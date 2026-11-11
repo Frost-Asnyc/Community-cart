@@ -63,7 +63,7 @@ function initialState() {
         id: "listing-books",
         title: "A stack of much-loved cookbooks",
         description:
-          "Eight cookbooks covering weeknight dinners, baking, and vegetarian meals. A few notes in the margins, lots of good recipes.",
+          "Eight lovely familily firendly cookbooks covering weeknight dinners, baking, and vegetarian meals. A few notes in the margins, lots of good recipes.",
         price: 18,
         category: "Books",
         image: "",
@@ -187,6 +187,29 @@ function ensureListingCanReceiveOffers(listing) {
 
 export function getListings() {
   return readState().listings;
+}
+
+export function cacheListings(listings) {
+  const state = readState();
+  for (const listing of listings) {
+    const index = state.listings.findIndex((item) => item.id === listing.id);
+    if (index < 0) {
+      state.listings.push(listing);
+      continue;
+    }
+    const existing = state.listings[index];
+    state.listings[index] = {
+      ...existing,
+      ...listing,
+      sellerId: existing.sellerId ?? listing.sellerId,
+      sellerName: existing.sellerName ?? listing.sellerName,
+      location: existing.location ?? listing.location,
+      deadline: existing.deadline ?? listing.deadline,
+      status: existing.status ?? listing.status,
+      createdAt: existing.createdAt ?? listing.createdAt,
+    };
+  }
+  writeState(state);
 }
 
 export function getCategories() {
