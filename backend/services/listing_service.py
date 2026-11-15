@@ -16,9 +16,9 @@ from models import Listing
 def filter_listings(category=None, search=None, min_price=None, max_price=None):
     query = Listing.query
 
-    if category:
+    if category is not None:
         query = query.filter(Listing.category == category)
-    if search:
+    if search is not None:
         pattern = f"%{search}%"
         query = query.filter(
             or_(Listing.title.ilike(pattern), Listing.description.ilike(pattern))

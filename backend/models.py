@@ -15,11 +15,11 @@ from flask_login import UserMixin
 from extensions import db, bcrypt
 
 class User(db.Model, UserMixin):
-    __table_name__ = "users"
+    __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(200), nullable=False)
-    password_hash = db.COlumn(db.String(255), nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
     location = db.Column(db.String(100))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -29,4 +29,16 @@ class User(db.Model, UserMixin):
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
 
-#TO DO (Member 2): Add Listing, Favorite, Inquiry, Offer models
+
+class Listing(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    category = db.Column(db.String(100), nullable=False)
+    condition = db.Column(db.String(100))
+    image_url = db.Column(db.String(500))
+    location = db.Column(db.String(100))
+    status = db.Column(db.String(20), nullable=False, default="active")
+    owner_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
