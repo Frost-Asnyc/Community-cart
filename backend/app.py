@@ -8,6 +8,7 @@
 # - Do not add route logic here. Only app configuration.
 # - Ensure CORS allows React on localhost:3000 with credentials.
 
+import os
 from flasgger import Swagger
 from flask import jsonify, Flask
 from config import Config
@@ -25,7 +26,7 @@ def create_app(config_class=Config):
             "version": "1.0.0",
         },
         "basePath": "/",
-        "schemes": ["https"],
+        "schemes": ["https"] if os.environ.get("FLASK_ENV") == "production" else ["http"],
         "securityDefinitions": {
             "cookieAuth": {
                 "type": "apiKey",
