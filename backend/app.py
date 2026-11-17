@@ -8,7 +8,7 @@
 # - Do not add route logic here. Only app configuration.
 # - Ensure CORS allows React on localhost:3000 with credentials.
 
-
+from flasgger import Swagger
 from flask import jsonify, Flask
 from config import Config
 from extensions import cors, bcrypt, db, login_manager, migrate
@@ -17,6 +17,23 @@ from models import User
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+
+    Swagger(app, template={
+        "info": {
+            "title": "Community Cart API",
+            "description": "A community marketplace where people buy, sell, and make private offers on second-hand items nearby.",
+            "version": "1.0.0",
+        },
+        "basePath": "/",
+        "schemes": ["http", "https"],
+        "securityDefinitions": {
+            "cookieAuth": {
+                "type": "apiKey",
+                "in": "cookie",
+                "name": "session",
+            }
+        },
+    })
 
     db.init_app(app)
     bcrypt.init_app(app)
