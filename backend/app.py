@@ -9,6 +9,7 @@
 # - Ensure CORS allows React on localhost:3000 with credentials.
 
 import os
+from flask_migrate import upgrade
 from flasgger import Swagger
 from flask import jsonify, Flask
 from config import Config
@@ -71,6 +72,18 @@ def create_app(config_class=Config):
     def internal_error(error):
         db.session.rollback()
         return jsonify({"error":"Internal Server error"}), 500
+
+    @app.route("/deploy-setup")
+    def deploy_setup():
+        try:
+            from flask_migrate import upgrade
+            from seed import seed_database
+            
+            upgrade()
+            seed_database()
+            return "Setup complete! Tables created and data seeded.", 200
+        except Exception as e:
+            return f"Error: {str(e)}", 500
 
     return app
 
