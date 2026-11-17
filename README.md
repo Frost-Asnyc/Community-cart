@@ -4,6 +4,12 @@ A local community marketplace API where users buy, sell, and make private sealed
 
 Built with **Flask + SQLAlchemy + Marshmallow + Flask-Login**. Interactive API docs at `/apidocs` (Swagger UI). 68 automated tests.
 
+## Live API
+- **Interactive Docs (Swagger UI):** [https://community-cart-giku.onrender.com/apidocs](https://community-cart-giku.onrender.com/apidocs)
+- **Base URL:** `https://community-cart-giku.onrender.com`
+
+*(Note: The deployed instance uses an ephemeral SQLite database and starts empty. All endpoints and tests were verified locally.)*
+
 ---
 
 ## Setup
