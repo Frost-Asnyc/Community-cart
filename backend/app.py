@@ -34,13 +34,13 @@ def create_app(config_class=Config):
         return jsonify({"error":"Unauthorized. Please log in."}), 401
 
     from routes.auth import auth_bp
-    from routes.favorites import favourites_bp
+    from routes.favorites import favorites_bp
     from routes.inquiries import inquiries_bp
     from routes.listings import listings_bp
     from routes.offers import offers_bp
 
     app.register_blueprint(auth_bp)
-    app.register_blueprint(favourites_bp)
+    app.register_blueprint(favorites_bp)
     app.register_blueprint(inquiries_bp)
     app.register_blueprint(listings_bp)
     app.register_blueprint(offers_bp)
@@ -49,7 +49,7 @@ def create_app(config_class=Config):
     def not_found(error):
         return jsonify({"error":"Resource not found"}), 404
 
-    @app.errorhandler(505)
+    @app.errorhandler(500)
     def internal_error(error):
         db.session.rollback()
         return jsonify({"error":"Internal Server error"}), 500
