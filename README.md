@@ -15,14 +15,20 @@ All commands run from **`client-with-sessions/backend/`**.
 ```bash
 git clone https://github.com/VincentKulankash/Community-cart.git
 cd Community-cart/client-with-sessions/backend
-2. Create a virtual environment
+
+
+### 2. Create a virtual environment
 bash
 python3 -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
-3. Install dependencies
+
+
+### 3. Install dependencies
 bash
 pip install -r requirements.txt
-4. Configure environment variables
+
+
+### 4. Configure environment variables
 bash
 cp .env.example .env
 Open .env and fill in:
@@ -36,15 +42,15 @@ MAILTRAP_SERVER=sandbox.smtp.mailtrap.io
 MAILTRAP_PORT=587
 Get Mailtrap credentials at mailtrap.io → Email Sandbox → SMTP Settings.
 
-5. Run migrations
+### 5. Run migrations
 bash
 flask db upgrade
-6. Seed sample data (optional but recommended)
+### 6. Seed sample data (optional but recommended)
 bash
 python seed.py
 Creates 5 users, 20 listings, 5 favorites, 3 inquiries, 3 offers. All seeded users share the password CommunityCart2026!. First user: maya.chen@example.com.
 
-7. Start the server
+### 7. Start the server
 bash
 flask run
 API: http://127.0.0.1:5000
