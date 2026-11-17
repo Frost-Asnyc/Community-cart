@@ -25,7 +25,7 @@ def create_app(config_class=Config):
             "version": "1.0.0",
         },
         "basePath": "/",
-        "schemes": ["http", "https"],
+        "schemes": ["https"],
         "securityDefinitions": {
             "cookieAuth": {
                 "type": "apiKey",
