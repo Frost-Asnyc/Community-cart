@@ -1,97 +1,253 @@
-import math
-
 from flask import Blueprint, jsonify, request
-from flask_login import current_user, login_required
-from marshmallow import ValidationError
+from flask_login import login_required, current_user
 
 from extensions import db
 from models import Listing
-from schemas.listing_schema import ListingSchema
-from services.listing_service import filter_listings, get_owned_listing, mark_sold
+from services.listing_service import (
+    filter_listings,
+    get_owned_listing,
+    mark_sold as mark_listing_sold,
+)
 
 listings_bp = Blueprint("listings_bp", __name__, url_prefix="/api/listings")
-listing_schema = ListingSchema()
-listings_schema = ListingSchema(many=True)
+
+
+def to_dict(listing):
+    return {
+        "id": listing.id,
+        "title": listing.title,
+        "description": listing.description,
+        "price": float(listing.price),
+        "category": listing.category,
+        "location": listing.location,
+        "image_url": listing.image_url,
+        "condition": listing.condition,
+        "status": listing.status,
+        "offer_ends_at": listing.offer_ends_at.isoformat() if listing.offer_ends_at else None,
+        "user_id": listing.user_id,
+    }
 
 
 @listings_bp.get("")
-def list_listings():
-    min_price, error = _price_filter("min")
-    if error:
-        return jsonify({"error": error}), 400
-
-    max_price, error = _price_filter("max")
-    if error:
-        return jsonify({"error": error}), 400
-
-    if min_price is not None and max_price is not None and min_price > max_price:
-        return jsonify({"error": "min must not be greater than max"}), 400
+def get_listings():
+    """
+    List all listings (public)
+    ---
+    tags:
+      - Listings
+    parameters:
+      - name: category
+        in: query
+        type: string
+        required: false
+      - name: q
+        in: query
+        type: string
+        required: false
+        description: Search title
+      - name: min
+        in: query
+        type: number
+        required: false
+      - name: max
+        in: query
+        type: number
+        required: false
+    responses:
+      200:
+        description: Array of listings
+    """
+    category = request.args.get("category")
+    search = request.args.get("q")
+    min_price = request.args.get("min")
+    max_price = request.args.get("max")
 
     listings = filter_listings(
-        category=request.args.get("category") or None,
-        search=request.args.get("q") or None,
-        min_price=min_price,
-        max_price=max_price,
+        category=category,
+        search=search,
+        min_price=float(min_price) if min_price else None,
+        max_price=float(max_price) if max_price else None,
     )
-    return jsonify(listings_schema.dump(listings)), 200
+    return jsonify([to_dict(l) for l in listings])
 
 
-@listings_bp.get("/<int:listing_id>")
-def get_listing(listing_id):
-    listing = db.session.get(Listing, listing_id)
-    if listing is None:
+@listings_bp.get("/<int:id>")
+def get_listing(id):
+    """
+    Get a single listing by ID
+    ---
+    tags:
+      - Listings
+    parameters:
+      - name: id
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Listing details
+      404:
+        description: Not found
+    """
+    listing = db.session.get(Listing, id)
+    if not listing:
         return jsonify({"error": "Listing not found"}), 404
-    return jsonify(listing_schema.dump(listing)), 200
+    return jsonify(to_dict(listing))
 
 
 @listings_bp.post("")
 @login_required
 def create_listing():
-    data = request.get_json(silent=True)
-    if not isinstance(data, dict):
-        return jsonify({"error": "Request body must be a JSON object"}), 400
+    """
+    Create a new listing
+    ---
+    tags:
+      - Listings
+    security:
+      - cookieAuth: []
+    consumes:
+      - application/json
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required: [title, price, category]
+          properties:
+            title:
+              type: string
+            description:
+              type: string
+            price:
+              type: number
+            category:
+              type: string
+            condition:
+              type: string
+            image_url:
+              type: string
+            location:
+              type: string
+    responses:
+      201:
+        description: Created
+      401:
+        description: Not logged in
+      422:
+        description: Validation error
+    """
+    data = request.get_json(silent=True) or {}
+
+    if not data.get("title") or not data.get("price") or not data.get("category"):
+        return jsonify({"error": "title, price and category are required"}), 422
 
     try:
-        listing = Listing(**listing_schema.load(data))
-    except ValidationError as error:
-        return jsonify({"error": "Invalid listing data", "details": error.messages}), 400
+        price = float(data["price"])
+    except (TypeError, ValueError):
+        return jsonify({"error": "price must be a number"}), 422
 
-    listing.owner_id = current_user.id
+    listing = Listing(
+        title=data["title"],
+        description=data.get("description"),
+        price=price,
+        category=data["category"],
+        condition=data.get("condition"),
+        image_url=data.get("image_url"),
+        location=data.get("location"),
+        status="active",
+        user_id=current_user.id,
+    )
     db.session.add(listing)
     db.session.commit()
-    return jsonify(listing_schema.dump(listing)), 201
+    return jsonify(to_dict(listing)), 201
 
 
-@listings_bp.patch("/<int:listing_id>")
+@listings_bp.patch("/<int:id>")
 @login_required
-def update_listing(listing_id):
-    listing = get_owned_listing(listing_id, current_user)
-    if listing is None:
+def update_listing(id):
+    """
+    Update a listing (owner only)
+    ---
+    tags:
+      - Listings
+    security:
+      - cookieAuth: []
+    parameters:
+      - name: id
+        in: path
+        type: integer
+        required: true
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          properties:
+            title: { type: string }
+            description: { type: string }
+            price: { type: number }
+            category: { type: string }
+            condition: { type: string }
+            image_url: { type: string }
+            location: { type: string }
+    responses:
+      200:
+        description: Updated
+      404:
+        description: Not found / not owned
+    """
+    listing = get_owned_listing(id, current_user)
+    if not listing:
         return jsonify({"error": "Listing not found"}), 404
 
-    data = request.get_json(silent=True)
-    if not isinstance(data, dict):
-        return jsonify({"error": "Request body must be a JSON object"}), 400
+    data = request.get_json(silent=True) or {}
 
-    try:
-        updates = listing_schema.load(data, partial=True)
-    except ValidationError as error:
-        return jsonify({"error": "Invalid listing data", "details": error.messages}), 400
+    if "title" in data:
+        listing.title = data["title"]
+    if "description" in data:
+        listing.description = data["description"]
+    if "price" in data:
+        try:
+            listing.price = float(data["price"])
+        except (TypeError, ValueError):
+            return jsonify({"error": "price must be a number"}), 422
+    if "category" in data:
+        listing.category = data["category"]
+    if "condition" in data:
+        listing.condition = data["condition"]
+    if "image_url" in data:
+        listing.image_url = data["image_url"]
+    if "location" in data:
+        listing.location = data["location"]
 
-    if not updates:
-        return jsonify({"error": "No editable listing fields provided"}), 400
-
-    for field, value in updates.items():
-        setattr(listing, field, value)
     db.session.commit()
-    return jsonify(listing_schema.dump(listing)), 200
+    return jsonify(to_dict(listing)), 200
 
 
-@listings_bp.delete("/<int:listing_id>")
+@listings_bp.delete("/<int:id>")
 @login_required
-def delete_listing(listing_id):
-    listing = get_owned_listing(listing_id, current_user)
-    if listing is None:
+def delete_listing(id):
+    """
+    Delete a listing (owner only)
+    ---
+    tags:
+      - Listings
+    security:
+      - cookieAuth: []
+    parameters:
+      - name: id
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Deleted
+      404:
+        description: Not found / not owned
+    """
+    listing = get_owned_listing(id, current_user)
+    if not listing:
         return jsonify({"error": "Listing not found"}), 404
 
     db.session.delete(listing)
@@ -99,27 +255,30 @@ def delete_listing(listing_id):
     return jsonify({"message": "Listing deleted"}), 200
 
 
-@listings_bp.patch("/<int:listing_id>/sold")
+@listings_bp.patch("/<int:id>/sold")
 @login_required
-def sell_listing(listing_id):
-    listing = get_owned_listing(listing_id, current_user)
-    if listing is None:
+def mark_sold(id):
+    """
+    Mark a listing as sold (owner only)
+    ---
+    tags:
+      - Listings
+    security:
+      - cookieAuth: []
+    parameters:
+      - name: id
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Listing marked sold
+      404:
+        description: Not found / not owned
+    """
+    listing = get_owned_listing(id, current_user)
+    if not listing:
         return jsonify({"error": "Listing not found"}), 404
 
-    listing = mark_sold(listing)
-    return jsonify(listing_schema.dump(listing)), 200
-
-
-def _price_filter(parameter):
-    raw_value = request.args.get(parameter)
-    if raw_value is None or raw_value == "":
-        return None, None
-
-    try:
-        value = float(raw_value)
-    except ValueError:
-        return None, f"{parameter} must be a valid number"
-
-    if not math.isfinite(value) or value < 0:
-        return None, f"{parameter} must be a finite non-negative number"
-    return value, None
+    mark_listing_sold(listing)
+    return jsonify(to_dict(listing)), 200

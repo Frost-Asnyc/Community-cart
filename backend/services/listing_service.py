@@ -1,12 +1,3 @@
-# OWNER: MEMBER 3 (Listings CRUD)
-# TASKS:
-# 1. Helper functions for filtering listings (category, search, price range).
-# 2. Ownership check for PATCH/DELETE.
-# 3. Logic to mark listing as sold.
-# RULES:
-# - Keep business logic here, not in the route functions.
-
-# Member 3 will fill this in
 from sqlalchemy import or_
 
 from extensions import db
@@ -16,9 +7,9 @@ from models import Listing
 def filter_listings(category=None, search=None, min_price=None, max_price=None):
     query = Listing.query
 
-    if category is not None:
+    if category:
         query = query.filter(Listing.category == category)
-    if search is not None:
+    if search:
         pattern = f"%{search}%"
         query = query.filter(
             or_(Listing.title.ilike(pattern), Listing.description.ilike(pattern))
@@ -33,7 +24,7 @@ def filter_listings(category=None, search=None, min_price=None, max_price=None):
 
 def get_owned_listing(listing_id, user):
     listing = db.session.get(Listing, listing_id)
-    if listing is None or listing.owner_id != user.id:
+    if listing is None or listing.user_id != user.id:
         return None
     return listing
 

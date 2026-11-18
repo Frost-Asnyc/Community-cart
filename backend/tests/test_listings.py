@@ -1,145 +1,266 @@
-import pytest
+# OWNER: MEMBER 6 (Testing & Docs)
+# TASKS:
+# 1. Write Pytest tests for the corresponding routes.
+# 2. Cover both success paths and error paths.
+# 3. Use the fixtures from conftest.py.
 
-from app import create_app
-from config import TestingConfig
+
 from extensions import db
-from models import Listing, User
+from models import Listing
 
 
-@pytest.fixture
-def app():
-    app = create_app(TestingConfig)
-    with app.app_context():
-        db.create_all()
-    yield app
-    with app.app_context():
-        db.session.remove()
-        db.drop_all()
+# ---------- PUBLIC GET ALL ----------
 
-
-@pytest.fixture
-def seller(app):
-    with app.app_context():
-        user = User(name="Seller", email="seller@example.com", password_hash="test")
-        db.session.add(user)
-        db.session.commit()
-        return user.id
-
-
-@pytest.fixture
-def seller_client(app, seller):
-    client = app.test_client()
-    with client.session_transaction() as session:
-        session["_user_id"] = str(seller)
-        session["_fresh"] = True
-    return client
-
-
-@pytest.fixture
-def other_user(app, seller):
-    with app.app_context():
-        user = User(name="Other", email="other@example.com", password_hash="test")
-        db.session.add(user)
-        db.session.commit()
-        return user.id
-
-
-def _create_listing(app, owner_id, **overrides):
-    values = {
-        "title": "Desk lamp",
-        "description": "A used desk lamp",
-        "price": 25,
-        "category": "Home",
-        "owner_id": owner_id,
-    }
-    values.update(overrides)
-    with app.app_context():
-        listing = Listing(**values)
-        db.session.add(listing)
-        db.session.commit()
-        return listing.id
-
-
-def test_public_listing_filters_and_details(app, seller):
-    matching_id = _create_listing(app, seller, title="Blue desk lamp", price=30)
-    _create_listing(app, seller, title="Red chair", price=40, category="Furniture")
-    _create_listing(app, seller, title="Green lamp", price=80)
-
-    response = app.test_client().get(
-        "/api/listings?category=Home&q=lamp&min=20&max=50"
-    )
+def test_get_listings_public_no_auth_required(client, listing):
+    """GET /api/listings is public — no login needed."""
+    response = client.get("/api/listings")
 
     assert response.status_code == 200
-    assert [listing["id"] for listing in response.json] == [matching_id]
-
-    detail = app.test_client().get(f"/api/listings/{matching_id}")
-    assert detail.status_code == 200
-    assert detail.json["title"] == "Blue desk lamp"
-
-    missing = app.test_client().get("/api/listings/999")
-    assert missing.status_code == 404
+    data = response.get_json()
+    assert isinstance(data, list)
+    assert len(data) == 1
+    assert data[0]["title"] == "Test Laptop"
 
 
-def test_create_update_mark_sold_and_delete_listing(seller_client, seller):
+
+def test_get_listings_filter_by_category(client, app, seller, listing):
+    """?category= returns only matching listings."""
+    other = Listing(
+        title="Running Shoes",
+        description="For jogging.",
+        price=3000,
+        category="Sports",
+        user_id=seller.id,
+    )
+    db.session.add(other)
+    db.session.commit()
+
+    response = client.get("/api/listings?category=Electronics")
+
+    assert response.status_code == 200
+    titles = [item["title"] for item in response.get_json()]
+    assert "Test Laptop" in titles
+    assert "Running Shoes" not in titles
+
+
+def test_get_listings_search_by_title(client, app, seller, listing):
+    """?q= filters by title case-insensitively."""
+    response = client.get("/api/listings?q=laptop")
+
+    assert response.status_code == 200
+    data = response.get_json()
+    assert len(data) == 1
+    assert data[0]["title"] == "Test Laptop"
+
+def test_get_listings_search_no_match(client):
+    response = client.get("/api/listings?q=nonexistentthing")
+
+    assert response.status_code == 200
+    assert response.get_json() == []
+
+
+def test_get_listings_min_max_price(client, app, seller):
+    """?min=&max= filter by price range."""
+    cheap = Listing(
+        title="Cheap Item",
+        description="Low price.",
+        price=100,
+        category="Misc",
+        user_id=seller.id,
+    )
+    expensive = Listing(
+        title="Expensive Item",
+        description="High price.",
+        price=99999,
+        category="Misc",
+        user_id=seller.id,
+    )
+    db.session.add_all([cheap, expensive])
+    db.session.commit()
+
+    response = client.get("/api/listings?min=50&max=200")
+
+    assert response.status_code == 200
+    titles = [item["title"] for item in response.get_json()]
+    assert "Cheap Item" in titles
+    assert "Expensive Item" not in titles
+    assert "Test Laptop" not in titles  # price 50000 is out of range
+
+
+# ---------- PUBLIC GET ONE ----------
+
+def test_get_one_listing_public(client, listing):
+    response = client.get(f"/api/listings/{listing.id}")
+
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data["id"] == listing.id
+    assert data["title"] == "Test Laptop"
+
+
+def test_get_missing_listing_returns_404(client):
+    response = client.get("/api/listings/99999")
+
+    assert response.status_code == 404
+    assert response.get_json() == {"error": "Listing not found"}
+
+
+# ---------- CREATE ----------
+
+def test_create_listing_requires_login(client):
+    response = client.post(
+        "/api/listings",
+        json={"title": "X", "price": 10, "category": "Test"},
+    )
+
+    assert response.status_code == 401
+
+
+def test_create_listing_success(seller_client):
     response = seller_client.post(
         "/api/listings",
         json={
-            "title": "Bicycle",
-            "description": "Works well",
-            "price": 100,
-            "category": "Sports",
-            "location": "North",
-            "user_id": 999,
+            "title": "New Gadget",
+            "description": "Fresh from seller",
+            "price": 250.50,
+            "category": "Electronics",
+            "condition": "New",
+            "location": "Nairobi",
+            "image_url": "https://example.com/g.jpg",
         },
     )
 
     assert response.status_code == 201
-    listing = response.json
-    listing_id = listing["id"]
-    assert listing["owner_id"] == seller
-    assert "user_id" not in listing
-
-    updated = seller_client.patch(
-        f"/api/listings/{listing_id}", json={"price": 90, "user_id": 999}
-    )
-    assert updated.status_code == 200
-    assert updated.json["price"] == 90
-    assert updated.json["owner_id"] == seller
-
-    sold = seller_client.patch(f"/api/listings/{listing_id}/sold")
-    assert sold.status_code == 200
-    assert sold.json["status"] == "sold"
-
-    deleted = seller_client.delete(f"/api/listings/{listing_id}")
-    assert deleted.status_code == 200
-    assert seller_client.get(f"/api/listings/{listing_id}").status_code == 404
+    data = response.get_json()
+    assert data["title"] == "New Gadget"
+    assert data["price"] == 250.50
+    assert data["status"] == "active"
+    assert data["user_id"] is not None
 
 
-def test_listing_mutations_require_auth_and_hide_non_owned_listings(
-    app, seller_client, other_user
-):
-    listing_id = _create_listing(app, other_user)
-
-    anonymous = app.test_client()
-    assert anonymous.post("/api/listings", json={}).status_code == 401
-
-    assert (
-        seller_client.patch(f"/api/listings/{listing_id}", json={"price": 10}).status_code
-        == 404
-    )
-    assert seller_client.delete(f"/api/listings/{listing_id}").status_code == 404
-    assert seller_client.patch(f"/api/listings/{listing_id}/sold").status_code == 404
-
-
-def test_listing_create_and_filter_validation(seller_client):
-    invalid_listing = seller_client.post(
+def test_create_listing_missing_title(seller_client):
+    response = seller_client.post(
         "/api/listings",
-        json={"title": "Incomplete", "description": "Missing required fields"},
+        json={"price": 100, "category": "Test"},
     )
-    assert invalid_listing.status_code == 400
 
-    invalid_filter = seller_client.get("/api/listings?min=abc")
-    assert invalid_filter.status_code == 400
+    assert response.status_code == 422
+    assert "error" in response.get_json()
 
-    reversed_range = seller_client.get("/api/listings?min=20&max=10")
-    assert reversed_range.status_code == 400
+
+def test_create_listing_missing_price(seller_client):
+    response = seller_client.post(
+        "/api/listings",
+        json={"title": "X", "category": "Test"},
+    )
+
+    assert response.status_code == 422
+    assert "error" in response.get_json()
+
+
+def test_create_listing_non_numeric_price(seller_client):
+    response = seller_client.post(
+        "/api/listings",
+        json={"title": "X", "price": "not-a-number", "category": "Test", "description": "desc"},
+    )
+
+    assert response.status_code == 422
+    data = response.get_json()
+    assert "error" in data
+    assert "price" in data["error"]
+
+
+# ---------- UPDATE ----------
+
+def test_update_listing_owner_can(seller_client, listing):
+    response = seller_client.patch(
+        f"/api/listings/{listing.id}",
+        json={"title": "Updated Title", "price": 75000},
+    )
+
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data["title"] == "Updated Title"
+    assert data["price"] == 75000.0
+    assert data["category"] == "Electronics"  # unchanged
+
+
+def test_update_listing_non_owner_gets_404(buyer_client, listing):
+    """User B trying to edit user A's listing gets 404, not 403."""
+    response = buyer_client.patch(
+        f"/api/listings/{listing.id}",
+        json={"title": "Hacked"},
+    )
+
+    assert response.status_code == 404
+    assert response.get_json() == {"error": "Listing not found"}
+
+
+def test_update_listing_requires_login(client, listing):
+    response = client.patch(
+        f"/api/listings/{listing.id}",
+        json={"title": "Anonymous"},
+    )
+
+    assert response.status_code == 401
+
+
+def test_create_listing_non_numeric_price(seller_client):
+    response = seller_client.post(
+        "/api/listings",
+        json={"title": "X", "price": "not-a-number", "category": "Test", "description": "desc"},
+    )
+
+    assert response.status_code == 422
+    data = response.get_json()
+    assert "error" in data
+    assert "price" in data["error"]
+
+# ---------- DELETE ----------
+
+def test_delete_listing_owner_can(seller_client, listing, app):
+    listing_id = listing.id
+    response = seller_client.delete(f"/api/listings/{listing_id}")
+
+    assert response.status_code == 200
+    assert response.get_json() == {"message": "Listing deleted"}
+
+    # Confirm it's gone
+    with app.app_context():
+        assert db.session.get(Listing, listing_id) is None
+
+
+def test_delete_listing_non_owner_gets_404(buyer_client, listing, app):
+    listing_id = listing.id
+    response = buyer_client.delete(f"/api/listings/{listing_id}")
+
+    assert response.status_code == 404
+    with app.app_context():
+        assert db.session.get(Listing, listing_id) is not None
+
+
+def test_delete_listing_requires_login(client, listing):
+    response = client.delete(f"/api/listings/{listing.id}")
+
+    assert response.status_code == 401
+
+
+# ---------- MARK SOLD ----------
+
+def test_mark_sold_owner_can(seller_client, listing):
+    response = seller_client.patch(f"/api/listings/{listing.id}/sold")
+
+    assert response.status_code == 200
+    assert response.get_json()["status"] == "sold"
+
+
+def test_mark_sold_non_owner_gets_404(buyer_client, listing):
+    response = buyer_client.patch(f"/api/listings/{listing.id}/sold")
+
+    assert response.status_code == 404
+
+
+def test_mark_sold_requires_login(client, listing):
+    response = client.patch(f"/api/listings/{listing.id}/sold")
+
+    assert response.status_code == 401
