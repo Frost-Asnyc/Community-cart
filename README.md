@@ -14,7 +14,8 @@ npm install
 npm run dev
 ```
 
-The frontend loads its product catalog from Fake Store API and keeps
-LocalLoop-specific demo state in browser storage. Fake Store writes are
-simulated and overlaid locally. See [`frontend/README.md`](./frontend/README.md)
-for details and the Flask integration boundary.
+The frontend loads DummyJSON products and curated demo listings to fill a
+500-item catalog, and keeps LocalLoop-specific demo state in browser storage.
+DummyJSON writes are simulated and overlaid locally. See
+[`frontend/README.md`](./frontend/README.md) for details and the Flask
+integration boundary.
