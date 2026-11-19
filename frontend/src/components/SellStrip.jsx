@@ -1,14 +1,31 @@
+
+import { ArrowRight, Check } from "lucide-react";
+
 /*
- * DEVELOPER: Olentiki
- * RESPONSIBILITY: Sell/listing call-to-action section.
- *
- * TASKS:
- * - Implement the existing sell strip design.
- * - Display the call-to-action encouraging users to create listings.
- * - Connect the action button to a callback supplied through props.
- *
- * INTEGRATION:
- * - App.jsx will handle navigation and authentication decisions.
- * - Do not implement listing creation inside this component.
- * - Preserve the existing design.
- */
+  DEVELOPER: Olentiki
+
+  RESPONSIBILITY:
+  Homepage selling call-to-action strip.
+*/
+
+function SellStrip({ onCreateListing }) {
+  return (
+    <section className="sell-strip">
+      <span className="sell-strip-icon">
+        <Check size={18} />
+      </span>
+
+      <span>
+        <strong>Have something good to pass along?</strong>
+        <br />
+        Someone nearby might be looking for just that.
+      </span>
+
+      <button type="button" onClick={onCreateListing}>
+        Make a listing <ArrowRight size={16} />
+      </button>
+    </section>
+  );
+}
+
+export default SellStrip;

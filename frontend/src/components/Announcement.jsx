@@ -1,13 +1,27 @@
+
+import { ArrowRight, Leaf } from "lucide-react";
+
 /*
- * DEVELOPER: Olentiki
- * RESPONSIBILITY: Announcement banner.
- *
- * TASKS:
- * - Implement the announcement section from the existing homepage.
- * - Display promotional or important application messages.
- * - Preserve the existing styling, spacing and responsiveness.
- *
- * INTEGRATION:
- * - Keep the component independent and reusable.
- * - Avoid hardcoding application navigation or authentication logic.
- */
+  DEVELOPER: Olentiki
+
+  RESPONSIBILITY:
+  Display the announcement banner above the navigation.
+*/
+
+function Announcement() {
+  return (
+    <div className="announcement">
+      <span className="announcement-mark">
+        <Leaf size={14} />
+      </span>
+
+      Good things go around. Find your next favorite nearby.
+
+      <a href="#finds">
+        Explore the loop <ArrowRight size={13} />
+      </a>
+    </div>
+  );
+}
+
+export default Announcement;
