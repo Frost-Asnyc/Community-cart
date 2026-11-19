@@ -2,11 +2,17 @@
 import { ArrowDown, ArrowRight, Sparkles } from "lucide-react";
 
 /*
-  DEVELOPER: Olentiki
-
-  RESPONSIBILITY:
-  Main homepage hero section.
-*/
+ * DEVELOPER: Olentiki
+ * RESPONSIBILITY: Homepage hero section.
+ *
+ * TASKS:
+ * - Improve the hero layout, messaging and visual presentation.
+ * - Add appropriate imagery or visual elements where needed.
+ * - Ensure call-to-action buttons use the existing application callbacks.
+ * - Make the section responsive.
+ *
+ * STYLING: src/styles/home.css
+ */
 
 function Hero({ onShowAllFinds }) {
   return (

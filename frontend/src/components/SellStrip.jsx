@@ -2,11 +2,16 @@
 import { ArrowRight, Check } from "lucide-react";
 
 /*
-  DEVELOPER: Olentiki
-
-  RESPONSIBILITY:
-  Homepage selling call-to-action strip.
-*/
+ * DEVELOPER: Olentiki
+ * RESPONSIBILITY: Homepage selling call-to-action section.
+ *
+ * TASKS:
+ * - Improve the selling/promotion section.
+ * - Ensure its call-to-action connects to the existing application flow.
+ * - Make the section responsive.
+ *
+ * STYLING: src/styles/home.css
+ */
 
 function SellStrip({ onCreateListing }) {
   return (

@@ -6,16 +6,33 @@ import Manifesto from "../components/Manifesto";
 import SellStrip from "../components/SellStrip";
 
 /*
-  DEVELOPER: Vincent
-
-  RESPONSIBILITY:
-  Compose the LocalLoop homepage.
-
-  NOTES:
-  - Marketplace listings will be connected to the backend later.
-  - No demo or external placeholder listings are displayed.
-  - App.jsx handles authentication and navigation.
-*/
+ * DEVELOPER: Olentiki
+ * RESPONSIBILITY: Homepage UI development and enhancement.
+ *
+ * MAIN FILES:
+ * - Home.jsx: Main homepage layout and section composition.
+ * - Hero.jsx: Main hero section.
+ * - Manifesto.jsx: Brand introduction.
+ * - SellStrip.jsx: Selling call-to-action section.
+ * - ListingCard.jsx: Reusable listing display.
+ * - home.css: Homepage styling.
+ *
+ * TASKS:
+ * - Improve and expand the homepage UI.
+ * - Add new homepage sections where appropriate.
+ * - Arrange existing sections into a consistent layout.
+ * - Reuse existing components where possible.
+ * - Ensure responsive layouts on desktop and mobile.
+ * - Maintain the existing application's navigation and routing.
+ *
+ * RULES:
+ * - Keep homepage composition in Home.jsx.
+ * - Keep individual section markup in its respective component.
+ * - Keep homepage-specific styles in home.css.
+ * - Do not introduce dummy listings.
+ * - Do not duplicate existing shared components.
+ * - Coordinate changes to shared components with other developers.
+ */
 
 function Home({ onShowAllFinds, onCreateListing }) {
   return (

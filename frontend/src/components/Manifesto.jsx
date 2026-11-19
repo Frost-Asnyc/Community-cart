@@ -2,11 +2,16 @@
 import { ArrowUpRight } from "lucide-react";
 
 /*
-  DEVELOPER: Olentiki
-
-  RESPONSIBILITY:
-  Homepage manifesto and mission section.
-*/
+ * DEVELOPER: Olentiki
+ * RESPONSIBILITY: Homepage brand introduction section.
+ *
+ * TASKS:
+ * - Improve the presentation of the marketplace introduction.
+ * - Maintain consistent typography and spacing.
+ * - Ensure the section fits the overall homepage design.
+ *
+ * STYLING: src/styles/home.css
+ */
 
 function Manifesto({ onShowAllFinds }) {
   return (

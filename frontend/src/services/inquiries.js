@@ -1,25 +1,29 @@
 
 /*
  * DEVELOPER: Mumo
- * RESPONSIBILITY: Inquiries API service.
+ * RESPONSIBILITY: Inquiries feature integration.
  *
- * BACKEND ENDPOINTS:
- * POST /api/listings/:listing_id/inquiries
- * GET  /api/listings/:listing_id/inquiries
- * GET  /api/inquiries/sent
+ * EXISTING SERVICE FUNCTIONS:
+ * - sendInquiry(listingId, message)
+ * - getListingInquiries(listingId)
+ * - getSentInquiries()
  *
  * TASKS:
- * - Implement sendInquiry(listingId, message).
- * - Implement getListingInquiries(listingId).
- * - Implement getSentInquiries().
- * - Handle API errors through the shared api.js.
- * - Preserve the backend response structure.
+ * - Connect the existing inquiry service functions to the UI.
+ * - Implement the inquiry form on the listing details page.
+ * - Allow users to view inquiries they have sent.
+ * - Allow listing owners to view inquiries received on their listings.
+ * - Add loading, empty, success, and error states.
+ * - Refresh inquiry data after submitting an inquiry.
  *
  * RULES:
+ * - Import and reuse functions from this service file.
+ * - Do not recreate API requests inside React components.
+ * - Do not duplicate the shared API configuration in api.js.
  * - All endpoints require authentication.
  * - Users cannot inquire about their own listings.
  * - Only listing owners can view inquiries on their listings.
- * - Do not implement a separate fetch configuration.
+ * - The backend remains responsible for enforcing permissions.
  */
 
 import { get, post } from "./api";

@@ -1,27 +1,30 @@
-
 /*
  * DEVELOPER: Mumo
- * RESPONSIBILITY: Offers API service.
+ * RESPONSIBILITY: Offers feature integration.
  *
- * BACKEND ENDPOINTS:
- * POST /api/listings/:listing_id/offers
- * GET  /api/listings/:listing_id/offers
- * GET  /api/listings/:listing_id/offers/mine
- * POST /api/listings/:listing_id/offers/close
+ * EXISTING SERVICE FUNCTIONS:
+ * - submitOffer(listingId, amount, message)
+ * - getListingOffers(listingId)
+ * - getMyOffer(listingId)
+ * - closeListingAuction(listingId)
  *
  * TASKS:
- * - Implement submitOffer(listingId, amount, message).
- * - Implement getListingOffers(listingId).
- * - Implement getMyOffer(listingId).
- * - Implement closeListingAuction(listingId).
- * - Handle API errors through the shared api.js.
- * - Preserve the backend response structure.
+ * - Connect the existing offer service functions to the UI.
+ * - Implement the offer submission interface.
+ * - Display the current user's offer on a listing.
+ * - Allow listing owners to view offers received.
+ * - Implement the auction closing interface for listing owners.
+ * - Add loading, empty, success, and error states.
+ * - Refresh offer information after submitting or closing an auction.
  *
  * RULES:
+ * - Import and reuse functions from this service file.
+ * - Do not recreate API requests inside React components.
+ * - Do not duplicate the shared API configuration in api.js.
  * - All endpoints require authentication.
  * - Offer amounts must be greater than zero.
  * - Only listing owners can view all offers or close auctions.
- * - Do not implement a separate fetch configuration.
+ * - The backend remains responsible for enforcing permissions.
  */
 
 import { get, post } from "./api";
