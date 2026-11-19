@@ -1,3 +1,21 @@
+/*
+ * DEVELOPER: Branis
+ * RESPONSIBILITY: User registration interface and validation.
+ *
+ * TASKS:
+ * - Validate required registration fields.
+ * - Validate email format.
+ * - Validate password requirements.
+ * - Confirm that password and password confirmation match.
+ * - Display backend registration errors, including duplicate email errors.
+ * - Handle loading and successful registration feedback.
+ *
+ * INTEGRATION:
+ * - Use the existing auth.js service.
+ * - Do not duplicate authentication API requests.
+ * - Coordinate successful registration with the existing authentication flow.
+ */
+
 
 import { useState } from "react";
 import {

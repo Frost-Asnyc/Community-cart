@@ -1,3 +1,20 @@
+/*
+ * DEVELOPER: Branis
+ * RESPONSIBILITY: Existing authentication API service.
+ *
+ * TASKS:
+ * - Maintain the login and registration requests.
+ * - Maintain the logout request.
+ * - Maintain the current-user/session verification request.
+ * - Ensure authentication errors are handled consistently.
+ *
+ * INTEGRATION:
+ * - Coordinate with Vincent on shared API configuration.
+ * - Preserve the currently working authentication flow.
+ * - Do not create a second authentication implementation.
+ * - Do not modify App.jsx.
+ */
+
 const API_URL = "http://localhost:5000/api/auth";
 
 async function request(endpoint, options = {}) {

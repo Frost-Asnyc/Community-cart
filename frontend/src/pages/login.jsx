@@ -1,3 +1,21 @@
+/*
+ * DEVELOPER: Branis
+ * RESPONSIBILITY: User login interface and validation.
+ *
+ * TASKS:
+ * - Validate required login fields.
+ * - Validate email format.
+ * - Display meaningful errors for invalid credentials.
+ * - Handle loading and failed login requests.
+ * - Provide appropriate feedback after successful login.
+ *
+ * INTEGRATION:
+ * - Use the existing auth.js service.
+ * - Do not duplicate authentication API requests.
+ * - Coordinate successful login with App.jsx authentication state.
+ * - Do not modify App.jsx.
+ */
+
 
 import { useState } from "react";
 import { ArrowLeft, Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
