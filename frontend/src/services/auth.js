@@ -1,71 +1,40 @@
+
 /*
- * DEVELOPER: Branis
- * RESPONSIBILITY: Existing authentication API service.
+ * DEVELOPER: Branis (feature owner) / Vincent (API integration)
+ * RESPONSIBILITY: Authentication API service.
  *
- * TASKS:
- * - Maintain the login and registration requests.
- * - Maintain the logout request.
- * - Maintain the current-user/session verification request.
- * - Ensure authentication errors are handled consistently.
+ * Handles:
+ * - User registration
+ * - User login
+ * - Current-user/session verification
+ * - User logout
  *
  * INTEGRATION:
- * - Coordinate with Vincent on shared API configuration.
- * - Preserve the currently working authentication flow.
- * - Do not create a second authentication implementation.
- * - Do not modify App.jsx.
+ * - Uses the shared api.js configuration.
+ * - Does not implement its own fetch configuration.
+ * - Preserves the existing function names used by the UI.
  */
 
-const API_URL = "http://localhost:5000/api/auth";
+import { get, post } from "./api";
 
-async function request(endpoint, options = {}) {
-  let response;
+const AUTH_ENDPOINT = "/api/auth";
 
-  try {
-    response = await fetch(`${API_URL}${endpoint}`, {
-      ...options,
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
-    });
-  } catch {
-    throw new Error(
-      "Cannot connect to the server. Make sure the Flask backend is running."
-    );
-  }
-
-  const data = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    throw new Error(data.error || "Something went wrong. Please try again.");
-  }
-
-  return data;
-}
-
+// Register a new user.
 export function registerUser(userData) {
-  return request("/signup", {
-    method: "POST",
-    body: JSON.stringify(userData),
-  });
+  return post(`${AUTH_ENDPOINT}/signup`, userData);
 }
 
+// Log in an existing user.
 export function loginUser(credentials) {
-  return request("/login", {
-    method: "POST",
-    body: JSON.stringify(credentials),
-  });
+  return post(`${AUTH_ENDPOINT}/login`, credentials);
 }
 
+// Verify the currently authenticated user.
 export function getCurrentUser() {
-  return request("/me", {
-    method: "GET",
-  });
+  return get(`${AUTH_ENDPOINT}/me`);
 }
 
+// Log out the current user.
 export function logoutUser() {
-  return request("/logout", {
-    method: "POST",
-  });
+  return post(`${AUTH_ENDPOINT}/logout`);
 }

@@ -1,15 +1,22 @@
+
 /*
  * DEVELOPER: ChrisMiles
  * RESPONSIBILITY: Favourites API service.
  *
- * TASKS:
- * - Retrieve the authenticated user's favourites.
- * - Add a listing to favourites.
- * - Remove a listing from favourites.
- * - Implement any other favourites operations supported by the backend.
+ * BACKEND ENDPOINTS:
+ * GET    /api/favorites
+ * POST   /api/favorites/:listing_id
+ * DELETE /api/favorites/:listing_id
  *
- * INTEGRATION:
- * - Use api.js for HTTP communication.
- * - Verify endpoint paths and request formats using Swagger.
- * - Do not store permanent favourites data in localStorage.
+ * TASKS:
+ * - Implement getFavorites().
+ * - Implement addFavorite(listingId).
+ * - Implement removeFavorite(listingId).
+ * - Handle API errors through the shared api.js.
+ * - Preserve the backend response structure.
+ *
+ * RULES:
+ * - All endpoints require authentication.
+ * - Do not use localStorage for permanent favourites.
+ * - Do not implement a separate fetch configuration.
  */
