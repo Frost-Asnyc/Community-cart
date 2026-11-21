@@ -50,14 +50,14 @@ export default function Navbar({
         ) : (
           <>
             <button
-              className="auth-header-button"
+              className="auth-header-button sign-in-button"
               type="button"
               onClick={() => onNavigate("/login")}
             >
               Sign in
             </button>
             <button
-              className="sell-button"
+              className="sell-button create-account-button"
               type="button"
               onClick={() => onNavigate("/register")}
             >

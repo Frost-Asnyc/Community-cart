@@ -28,7 +28,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 ::selection { color: white; background: #bd1020; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
-.app-shell { max-width: 1600px; margin: 0 auto; overflow: clip; background: #080808; }
+.app-shell { width: 100%; max-width: none; margin: 0 auto; overflow-x: clip; background: #080808; }
 .scroll-progress { position: fixed; z-index: 20; top: 0; right: 0; left: 0; height: 2px; pointer-events: none; }
 .scroll-progress span { display: block; width: 100%; height: 100%; background: var(--red); transform: scaleX(0); transform-origin: left; transition: transform .08s linear; }
 .announcement { min-height: 34px; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 7px 22px; background: #8d0b19; color: #fff; font-size: 9px; letter-spacing: .035em; }
@@ -230,7 +230,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 .sell-strip button { margin-left: auto; padding: 10px 0 10px 18px; display: inline-flex; gap: 10px; align-items: center; border: 0; background: transparent; color: white; font-size: 10px; font-weight: 700; cursor: pointer; }
 .sell-strip button svg { transition: transform .2s; }
 .sell-strip button:hover svg { transform: translateX(4px); }
-.site-footer { min-height: 83px; padding: 18px clamp(24px, 6vw, 94px); display: flex; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid rgba(255,255,255,.13); border-radius: 40px 40px 0 0; background: #080808; color: #aaa4a3; font-size: 8px; }
+.site-footer { min-height: 83px; padding: 18px clamp(24px, 6vw, 94px); display: flex; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid rgba(255,255,255,.13); border-radius: 40px 40px 0 0; background: #080808; color: #aaa4a3; font-size: 8.32px; }
 .footer-wordmark { font-size: 17px; }
 .footer-wordmark .wordmark-symbol { transform: scale(.85); transform-origin: left center; }
 .site-footer > a:last-child { color: #e3dcdb; }
@@ -780,38 +780,41 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 ========================================= */
 
 .auth-page {
-  background:
-    radial-gradient(circle at top right, rgba(255, 166, 73, 0.16), transparent 38%),
-    var(--paper);
+  background: var(--red);
   color: var(--ink);
   font-family: "DM Sans", sans-serif;
 }
 
 .auth-card {
-  background: #fffefa;
-  border: 1px solid rgba(40, 56, 69, 0.14);
+  background: var(--ink);
+  border: 1px solid rgba(242, 241, 234, 0.18);
   border-radius: 18px;
-  box-shadow: 0 20px 60px rgba(40, 56, 69, 0.10);
+  box-shadow: 0 20px 60px rgba(40, 56, 69, 0.22);
 }
 
 .auth-brand {
-  color: var(--ink);
+  color: var(--paper);
   font-family: "DM Sans", sans-serif;
   letter-spacing: -1px;
 }
 
+.auth-eyebrow {
+  color: #ffbf69;
+}
+
 .auth-heading h1 {
-  color: var(--ink);
+  color: var(--paper);
 }
 
 .auth-heading p,
 .auth-switch,
-.auth-footer {
-  color: var(--muted);
+.auth-footer,
+.auth-location-status {
+  color: #d3d9d7;
 }
 
 .auth-field label {
-  color: var(--ink);
+  color: var(--paper);
 }
 
 .auth-input-wrap input {
@@ -827,26 +830,38 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 }
 
 .auth-submit-button {
-  background: var(--ink);
-  color: white;
+  background: var(--red);
+  color: var(--ink);
   border-radius: 40px;
 }
 
 .auth-submit-button:hover {
-  background: var(--red);
+  background: #ffb662;
   color: var(--ink);
 }
 
 .auth-switch button {
-  color: #c47720;
+  color: #ffbf69;
 }
 
 .auth-back-button {
+  min-height: 40px;
+  padding: 10px 18px;
+  border: 1px solid rgba(40, 56, 69, 0.38);
+  border-radius: 40px;
+  background: #fffefa;
   color: var(--ink);
+  font-size: 10px;
+  font-weight: 700;
+  transition: all 0.25s ease;
 }
 
 .auth-back-button:hover {
-  color: #c47720;
+  transform: translateY(-2px);
+  border-color: var(--red);
+  background: #fffefa;
+  color: var(--ink);
+  box-shadow: 0 0 16px 3px rgba(255, 166, 73, 0.5);
 }
 
 /* =========================================
@@ -879,6 +894,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
   border-color: var(--red);
   background: var(--red);
   color: var(--ink);
+  box-shadow: 0 0 16px 3px rgba(255, 166, 73, 0.42);
 }
 
 .auth-header-button:focus-visible,
@@ -1142,5 +1158,288 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
   .quick-view-button {
     animation: none;
     transition: none;
+  }
+}
+
+/* =========================================
+   RESPONSIVE DESIGN SYSTEM
+========================================= */
+
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 0;
+}
+
+main,
+section,
+header,
+footer,
+form,
+nav,
+.app-shell {
+  max-width: 100%;
+}
+
+img,
+svg,
+canvas,
+video,
+iframe {
+  max-width: 100%;
+}
+
+img,
+video,
+canvas {
+  height: auto;
+}
+
+@media (max-width: 1023px) {
+  .site-header {
+    padding-inline: clamp(16px, 4vw, 28px);
+  }
+
+  .main-nav {
+    margin-left: 24px;
+  }
+
+  .finds-section {
+    padding-inline: clamp(20px, 5vw, 52px);
+  }
+
+  .listing-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .manifesto {
+    padding-inline: clamp(28px, 8vw, 72px);
+  }
+}
+
+@media (max-width: 767px) {
+  .wordmark {
+    min-width: 0;
+  }
+
+  .header-actions {
+    gap: 8px;
+  }
+
+  .header-actions .sign-in-button,
+  .header-actions .create-account-button,
+  .header-actions .header-user,
+  .header-actions .auth-header-button {
+    display: none;
+  }
+
+  .main-nav {
+    width: 100%;
+  }
+
+  .hero {
+    min-height: clamp(610px, 92vh, 690px);
+  }
+
+  .hero-copy {
+    width: 100%;
+  }
+
+  .hero h1 {
+    max-width: 11ch;
+  }
+
+  .browse-tools {
+    width: 100%;
+  }
+
+  .section-heading {
+    align-items: flex-start;
+  }
+
+  .listing-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .listing-card {
+    min-width: 0;
+  }
+
+  .listing-title-row {
+    min-width: 0;
+  }
+
+  .listing-title-row h3 {
+    min-width: 0;
+  }
+
+  .manifesto {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sell-strip {
+    flex-wrap: wrap;
+  }
+
+  .sell-strip button {
+    margin-left: auto;
+  }
+
+  .auth-container {
+    max-width: 460px;
+  }
+}
+
+@media (max-width: 480px) {
+  .announcement {
+    min-height: 38px;
+  }
+
+  .announcement a {
+    white-space: nowrap;
+  }
+
+  .site-header {
+    height: 64px;
+  }
+
+  .wordmark {
+    font-size: clamp(15px, 5vw, 18px);
+  }
+
+  .header-actions > .sell-button:not(.create-account-button) {
+    min-height: 40px;
+    max-width: 112px;
+    padding-inline: 10px;
+  }
+
+  .main-nav {
+    top: 64px;
+  }
+
+  .hero {
+    min-height: 600px;
+  }
+
+  .hero-actions {
+    width: 100%;
+  }
+
+  .hero-actions .button-primary {
+    max-width: 100%;
+  }
+
+  .finds-section {
+    padding-inline: 16px;
+  }
+
+  .section-heading {
+    flex-direction: column;
+  }
+
+  .section-heading h2 {
+    max-width: 100%;
+  }
+
+  .category-list {
+    width: 100%;
+  }
+
+  .listing-grid {
+    gap: 16px 10px;
+  }
+
+  .listing-card {
+    padding: 6px;
+  }
+
+  .listing-details {
+    min-width: 0;
+  }
+
+  .listing-title-row h3,
+  .listing-category,
+  .listing-location {
+    overflow-wrap: anywhere;
+  }
+
+  .quick-view-button {
+    max-width: calc(100% - 14px);
+  }
+
+  .manifesto {
+    border-radius: 24px;
+  }
+
+  .sell-strip {
+    border-radius: 24px;
+  }
+
+  .site-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .auth-page {
+    min-width: 0;
+  }
+
+  .auth-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 375px) {
+  .header-actions > .sell-button:not(.create-account-button) {
+    max-width: 44px;
+    font-size: 0;
+  }
+
+  .header-actions > .sell-button:not(.create-account-button) span {
+    font-size: 17px;
+  }
+
+  .hero {
+    padding-inline: 16px;
+  }
+
+  .hero h1 {
+    font-size: clamp(54px, 17vw, 64px);
+  }
+
+  .listing-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .listing-image-wrap {
+    aspect-ratio: 1 / 0.9;
+  }
+
+  .listing-card {
+    padding: 8px;
+  }
+
+  .auth-page {
+    padding-inline: 10px;
+  }
+
+  .auth-card {
+    padding-inline: 16px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .finds-section,
+  .sell-strip,
+  .site-footer,
+  .hero {
+    padding-left: clamp(48px, 6vw, 96px);
+    padding-right: clamp(48px, 6vw, 96px);
+  }
+
+  .listing-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(18px, 1.5vw, 28px);
   }
 }
