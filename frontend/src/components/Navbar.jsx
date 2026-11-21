@@ -1,4 +1,4 @@
-import { Heart, Menu, X } from "lucide-react";
+import { ArrowUpRight, Heart, Menu, X } from "lucide-react";
 
 export default function Navbar({
   currentUser,
@@ -65,6 +65,13 @@ export default function Navbar({
             </button>
           </>
         )}
+        <button
+          className="underground-nav-button"
+          type="button"
+          onClick={() => onNavigate("/underground")}
+        >
+          Underground <ArrowUpRight size={14} aria-hidden="true" />
+        </button>
         <button className="sell-button" type="button" onClick={onSell}>
           <span>+</span> List an item
         </button>

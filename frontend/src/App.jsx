@@ -11,6 +11,7 @@ import {
 import Login from "./pages/login";
 import Register from "./pages/register";
 import Home from "./pages/Home";
+import UndergroundEntry from "./pages/UndergroundEntry";
 import Announcement from "./components/Announcement";
 import Navbar from "./components/Navbar";
 import ListingCard from "./components/ListingCard";
@@ -42,6 +43,11 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
+    if (currentPath === "/underground") {
+      setLoading(false);
+      return undefined;
+    }
+
     const controller = new AbortController();
 
     async function loadListings() {
@@ -111,13 +117,16 @@ function App() {
 
     loadListings();
     return () => controller.abort();
-  }, [listingAttempt]);
+  }, [currentPath, listingAttempt]);
 
   useEffect(() => {
+    if (currentPath === "/underground") return undefined;
+
     getCurrentUser()
       .then(setCurrentUser)
       .catch(() => setCurrentUser(null));
-  }, []);
+    return undefined;
+  }, [currentPath]);
 
   useEffect(() => {
     function handlePopState() {
@@ -287,6 +296,10 @@ function App() {
 
   if (currentPath === "/register") {
     return <Register onNavigate={navigate} />;
+  }
+
+  if (currentPath === "/underground") {
+    return <UndergroundEntry onNavigate={navigate} />;
   }
 
   return (
