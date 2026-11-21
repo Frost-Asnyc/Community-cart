@@ -1,21 +1,3 @@
-/*
- * DEVELOPER: Branis
- * RESPONSIBILITY: User login interface and validation.
- *
- * TASKS:
- * - Validate required login fields.
- * - Validate email format.
- * - Display meaningful errors for invalid credentials.
- * - Handle loading and failed login requests.
- * - Provide appropriate feedback after successful login.
- *
- * INTEGRATION:
- * - Use the existing auth.js service.
- * - Do not duplicate authentication API requests.
- * - Coordinate successful login with App.jsx authentication state.
- * - Do not modify App.jsx.
- */
-
 
 import { useState } from "react";
 import { ArrowLeft, Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
@@ -75,13 +57,13 @@ function Login({ onNavigate, onAuthSuccess }) {
           onClick={() => onNavigate("/")}
         >
           <ArrowLeft size={18} />
-          Back to LocalLoop
+          Back to Community-cart
         </button>
 
         <div className="auth-card">
           <div className="auth-brand">
-            <span className="auth-brand-icon">L</span>
-            <span>LocalLoop</span>
+            <span className="auth-brand-icon">C</span>
+            <span>ommunity-Cart</span>
           </div>
 
           <div className="auth-heading">
@@ -155,7 +137,7 @@ function Login({ onNavigate, onAuthSuccess }) {
           </form>
 
           <p className="auth-switch">
-            New to LocalLoop?{" "}
+            New to Community-Cart?{" "}
             <button type="button" onClick={() => onNavigate("/register")}>
               Create an account
             </button>

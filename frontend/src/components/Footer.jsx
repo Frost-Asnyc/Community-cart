@@ -1,38 +1,12 @@
-
-/*
-  DEVELOPER: Olentiki
-
-  RESPONSIBILITY:
-  Main website footer.
-*/
-
-function Footer({ onNavigate }) {
+export default function Footer() {
   return (
     <footer className="site-footer">
-      <a
-        className="wordmark footer-wordmark"
-        href="/"
-        aria-label="LocalLoop home"
-        onClick={(event) => {
-          event.preventDefault();
-          onNavigate("/");
-        }}
-      >
-        <span className="wordmark-symbol">
-          <span />
-          <span />
-        </span>
-
-        <span>
-          local<span className="wordmark-light">loop</span>
-        </span>
+      <a className="wordmark footer-wordmark" href="#" aria-label="Community-Cart home">
+        <span className="wordmark-symbol"><span /><span /></span>
+        <span>Community-cart<span className="wordmark-light"></span></span>
       </a>
-
-      <span>Good things go around. © 2025 LocalLoop</span>
-
+      <span>Everything for everyone. © 2025 Community-Cart</span>
       <a href="#finds">Back to the good stuff ↑</a>
     </footer>
   );
 }
-
-export default Footer;

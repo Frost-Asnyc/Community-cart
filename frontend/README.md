@@ -1,7 +1,8 @@
-# Community Cart frontend
+# LocalLoop frontend
 
-A responsive React storefront with an editorial cream, navy, and orange palette,
-interactive product cards, and animated 3D details.
+A responsive React storefront inspired by the high-contrast black and red
+palette, oversized display type, cinematic imagery, and motion in the design
+reference.
 
 ## Run locally
 
@@ -10,17 +11,11 @@ npm install
 npm run dev
 ```
 
-The Vite server runs on port 3000. Start the Flask backend on port 5000 as well:
-
-```sh
-cd ../backend
-flask db upgrade
-flask run
-```
-
-The storefront loads active listings from `/api/listings`. If the database has
-no active listings, it loads the public mock catalog at `/api/mock/listings`.
-The mock endpoint is read-only and does not create database records.
+The Vite server runs on port 3000. The storefront starts with curated LocalLoop
+demo finds and loads the wider product catalog from DummyJSON. If that catalog
+is unavailable, the curated picks remain available and an on-page notice
+explains the issue.
 
 Search, category filters, and saved finds work in the browser. Saved finds are
-stored in local storage. Listing creation is still a visual placeholder.
+stored in local storage. Listing creation is a visual placeholder; the Flask
+auth, favorites, and offers endpoints are not implemented yet.

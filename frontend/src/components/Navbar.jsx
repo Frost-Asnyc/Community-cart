@@ -1,93 +1,49 @@
-
-import { useState } from "react";
 import { Heart, Menu, X } from "lucide-react";
 
-/*
-  DEVELOPER: Olentiki
-
-  RESPONSIBILITY:
-  Main website navigation and header.
-
-  INTEGRATION:
-  Navigation and authentication actions are handled by App.jsx.
-*/
-
-function Navbar({
+export default function Navbar({
   currentUser,
+  menuOpen,
+  setMenuOpen,
+  savedOnly,
+  setSavedOnly,
+  setVisibleCount,
+  savedItems,
   onNavigate,
   onLogout,
-  savedOnly,
-  savedCount,
-  onToggleSaved,
-  onCreateListing,
+  onSell,
 }) {
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  function handleNavigate(path) {
+  function toggleSavedView() {
+    setSavedOnly((current) => !current);
+    setVisibleCount(8);
     setMenuOpen(false);
-    onNavigate(path);
   }
 
   return (
     <header className="site-header">
-      <a
-        className="wordmark"
-        href="/"
-        aria-label="LocalLoop home"
-        onClick={(event) => {
-          event.preventDefault();
-          handleNavigate("/");
-        }}
-      >
-        <span className="wordmark-symbol">
-          <span />
-          <span />
-        </span>
-        <span>
-          local<span className="wordmark-light">loop</span>
-        </span>
+      <a className="wordmark" href="#" aria-label="Community-Cart home">
+        <span className="wordmark-symbol"><span /><span /></span>
+        <span>Community-cart<span className="wordmark-light"></span></span>
       </a>
-
       <nav className={`main-nav ${menuOpen ? "is-open" : ""}`}>
-        <a href="#finds" onClick={() => setMenuOpen(false)}>
-          Explore
-        </a>
-
-        <a href="#how-it-works" onClick={() => setMenuOpen(false)}>
-          How it works
-        </a>
-
+        <a href="#finds" onClick={() => setMenuOpen(false)}>Explore</a>
+        <a href="#how-it-works" onClick={() => setMenuOpen(false)}>How it works</a>
         <button
           className={savedOnly ? "nav-saved active" : "nav-saved"}
           type="button"
-          onClick={() => {
-            onToggleSaved();
-            setMenuOpen(false);
-          }}
+          onClick={toggleSavedView}
         >
           <Heart size={16} fill={savedOnly ? "currentColor" : "none"} />
           Saved
-          {savedCount > 0 && (
-            <span className="saved-count">{savedCount}</span>
+          {savedItems.length > 0 && (
+            <span className="saved-count">{savedItems.length}</span>
           )}
         </button>
       </nav>
-
       <div className="header-actions">
         {currentUser ? (
           <>
-            <span className="header-user">
-              Hi, {currentUser.name}
-            </span>
-
-            <button
-              className="auth-header-button"
-              type="button"
-              onClick={() => {
-                setMenuOpen(false);
-                onLogout();
-              }}
-            >
+            <span className="header-user">Hi, {currentUser.name}</span>
+            <button className="auth-header-button" type="button" onClick={onLogout}>
               Sign out
             </button>
           </>
@@ -96,32 +52,22 @@ function Navbar({
             <button
               className="auth-header-button"
               type="button"
-              onClick={() => handleNavigate("/login")}
+              onClick={() => onNavigate("/login")}
             >
               Sign in
             </button>
-
             <button
               className="sell-button"
               type="button"
-              onClick={() => handleNavigate("/register")}
+              onClick={() => onNavigate("/register")}
             >
               Create account
             </button>
           </>
         )}
-
-        <button
-          className="sell-button"
-          type="button"
-          onClick={() => {
-            setMenuOpen(false);
-            onCreateListing();
-          }}
-        >
+        <button className="sell-button" type="button" onClick={onSell}>
           <span>+</span> List an item
         </button>
-
         <button
           className="mobile-menu"
           type="button"
@@ -135,5 +81,3 @@ function Navbar({
     </header>
   );
 }
-
-export default Navbar;
