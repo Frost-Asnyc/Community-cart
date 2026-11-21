@@ -1,11 +1,9 @@
 import { ArrowUpRight, ImageOff, Star } from "lucide-react";
 
 function formatPrice(price) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 2,
-  }).format(price);
+  return `KES ${new Intl.NumberFormat("en-KE", {
+    maximumFractionDigits: 0,
+  }).format(price || 0)}`;
 }
 
 export default function UndergroundProductCard({ product, onSelect }) {
@@ -39,15 +37,7 @@ export default function UndergroundProductCard({ product, onSelect }) {
         <span className="underground-product-index" aria-hidden="true">
           CC / UG
         </span>
-        <span
-          className={
-            product.availability
-              ? "underground-stock-tag"
-              : "underground-stock-tag is-unavailable"
-          }
-        >
-          {product.availability ? "AVAILABLE" : "DEMO ONLY"}
-        </span>
+        <span className="underground-stock-tag">AVAILABLE</span>
       </button>
 
       <div className="underground-product-info">
@@ -70,6 +60,7 @@ export default function UndergroundProductCard({ product, onSelect }) {
         <div className="underground-product-bottom">
           <span className="underground-product-price">
             {formatPrice(product.price)}
+            {["Nightlife & Entertainment", "Motorsports"].includes(product.category) ? " / person" : ""}
           </span>
           <button
             className="underground-view-button"

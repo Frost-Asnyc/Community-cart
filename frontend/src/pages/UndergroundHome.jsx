@@ -344,13 +344,13 @@ export default function UndergroundHome({ onNavigate }) {
 
           <div className="underground-filter-panel">
             <form className="underground-price-filter" onSubmit={applyPriceFilter}>
-              <span className="underground-filter-label">PRICE RANGE</span>
+              <span className="underground-filter-label">PRICE RANGE (KES)</span>
               <label>
                 <span className="sr-only">Minimum price</span>
                 <input
                   type="number"
                   min="0"
-                  step="0.01"
+                  step="1"
                   value={priceDraft.min}
                   onChange={(event) => setPriceDraft((current) => ({ ...current, min: event.target.value }))}
                   placeholder="Min"
@@ -362,7 +362,7 @@ export default function UndergroundHome({ onNavigate }) {
                 <input
                   type="number"
                   min="0"
-                  step="0.01"
+                  step="1"
                   value={priceDraft.max}
                   onChange={(event) => setPriceDraft((current) => ({ ...current, max: event.target.value }))}
                   placeholder="Max"
@@ -468,9 +468,9 @@ export default function UndergroundHome({ onNavigate }) {
             <p className="underground-section-index">A DIFFERENT KIND OF LOOP</p>
             <h2 id="underground-code-title">Good finds.<br /><em>Different frequency.</em></h2>
             <p>
-              Underground is a separate, age-gated demo space for alternative
-              culture and fictional marketplace finds. The age check is
-              simulated, and listings are for demonstration only.
+              Underground is an age-gated demo space for alternative culture and
+              curated marketplace finds. Product stock, booking availability,
+              and checkout are not connected. The age check is simulated.
             </p>
           </div>
           <div className="underground-code-stamp">

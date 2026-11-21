@@ -1,54 +1,19 @@
-const API_URL = "http://localhost:5000/api/auth";
+import { get, post } from "./api";
 
-async function request(endpoint, options = {}) {
-  let response;
-
-  try {
-    response = await fetch(`${API_URL}${endpoint}`, {
-      ...options,
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
-    });
-  } catch {
-    throw new Error(
-      "Cannot connect to the server. Make sure the Flask backend is running."
-    );
-  }
-
-  const data = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    throw new Error(data.error || "Something went wrong. Please try again.");
-  }
-
-  return data;
-}
+const AUTH_ENDPOINT = "/api/auth";
 
 export function registerUser(userData) {
-  return request("/signup", {
-    method: "POST",
-    body: JSON.stringify(userData),
-  });
+  return post(`${AUTH_ENDPOINT}/signup`, userData);
 }
 
 export function loginUser(credentials) {
-  return request("/login", {
-    method: "POST",
-    body: JSON.stringify(credentials),
-  });
+  return post(`${AUTH_ENDPOINT}/login`, credentials);
 }
 
 export function getCurrentUser() {
-  return request("/me", {
-    method: "GET",
-  });
+  return get(`${AUTH_ENDPOINT}/me`);
 }
 
 export function logoutUser() {
-  return request("/logout", {
-    method: "POST",
-  });
+  return post(`${AUTH_ENDPOINT}/logout`);
 }

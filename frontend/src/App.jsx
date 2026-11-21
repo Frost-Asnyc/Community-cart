@@ -17,9 +17,14 @@ import Navbar from "./components/Navbar";
 import ListingCard from "./components/ListingCard";
 import Footer from "./components/Footer";
 import { getCurrentUser, logoutUser } from "./services/auth";
-
-const listingsUrl = "http://localhost:5000/api/listings";
-const mockListingsUrl = "http://localhost:5000/api/mock/listings";
+import { getListings } from "./services/listings";
+import { addFavorite, getFavorites, removeFavorite } from "./services/favorites";
+import ListingForm from "./pages/ListingForm";
+import ListingDetails from "./pages/ListingDetails";
+import MyListings from "./pages/MyListings";
+import Favorites from "./pages/Favorites";
+import Offers from "./pages/Offers";
+import Inquiries from "./pages/Inquiries";
 
 
 function readSavedItems() {
@@ -43,7 +48,7 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    if (currentPath === "/underground") {
+    if (currentPath !== "/") {
       setLoading(false);
       return undefined;
     }
@@ -52,36 +57,11 @@ function App() {
 
     async function loadListings() {
       try {
-        const response = await fetch(listingsUrl, {
-          signal: controller.signal,
-          credentials: "include",
-        });
-        const data = await response.json().catch(() => null);
-        if (!response.ok) {
-          throw new Error(
-            data?.error || `Marketplace request failed (${response.status})`,
-          );
-        }
+        const data = await getListings({});
         if (!Array.isArray(data)) {
           throw new Error("The marketplace returned an unexpected response.");
         }
-        let activeListings = data.filter((listing) => listing?.status === "active");
-        if (activeListings.length === 0) {
-          const mockResponse = await fetch(mockListingsUrl, {
-            signal: controller.signal,
-            credentials: "include",
-          });
-          const mockData = await mockResponse.json().catch(() => null);
-          if (!mockResponse.ok) {
-            throw new Error(
-              mockData?.error || `Demo catalog request failed (${mockResponse.status})`,
-            );
-          }
-          if (!Array.isArray(mockData)) {
-            throw new Error("The demo catalog returned an unexpected response.");
-          }
-          activeListings = mockData;
-        }
+        const activeListings = data.filter((listing) => listing?.status === "active");
 
         setListings(
           activeListings
@@ -92,7 +72,7 @@ function App() {
               price: listing.price,
               condition: listing.condition || "Condition not specified",
               location: listing.location || "",
-              image: listing.image_url,
+              image: listing.image_url || "https://placehold.co/640x480?text=Community+find",
               tint: "sand",
               note: listing.description || "",
             })),
@@ -138,8 +118,15 @@ function App() {
   }, []);
 
   useEffect(() => {
-    window.localStorage.setItem("localloop:saved", JSON.stringify(savedItems));
-  }, [savedItems]);
+    if (!currentUser) window.localStorage.setItem("localloop:saved", JSON.stringify(savedItems));
+  }, [currentUser, savedItems]);
+
+  useEffect(() => {
+    if (!currentUser) return;
+    getFavorites()
+      .then((data) => setSavedItems((data.favorites || []).map((favorite) => favorite.listing_id)))
+      .catch((error) => setToast(error.message || "Unable to load your saved finds"));
+  }, [currentUser]);
 
   useEffect(() => {
     if (!toast) return undefined;
@@ -258,11 +245,20 @@ function App() {
 
   function toggleSaved(listing) {
     const isSaved = savedItems.includes(listing.id);
-    setSavedItems((current) =>
-      isSaved
-        ? current.filter((id) => id !== listing.id)
-        : [...current, listing.id],
-    );
+    if (currentUser) {
+      (isSaved ? removeFavorite(listing.id) : addFavorite(listing.id))
+        .then(() => {
+          setSavedItems((current) => isSaved
+            ? current.filter((id) => id !== listing.id)
+            : [...current, listing.id]);
+          setToast(isSaved ? "Removed from your saved finds" : "Saved for later");
+        })
+        .catch((error) => setToast(error.message || "Unable to update saved finds"));
+      return;
+    }
+    setSavedItems((current) => isSaved
+      ? current.filter((id) => id !== listing.id)
+      : [...current, listing.id]);
     setToast(isSaved ? "Removed from your saved finds" : "Saved for later");
   }
 
@@ -281,9 +277,22 @@ function App() {
     return;
   }
 
-  setToast("Listing tools are coming soon");
+  navigate("/listings/new");
 }
   const visibleListings = filteredListings.slice(0, visibleCount);
+
+  function pageShell(content) {
+    return (
+      <div className="app-shell">
+        <div className="scroll-progress" aria-hidden="true"><span /></div>
+        <Announcement />
+        <Navbar currentUser={currentUser} menuOpen={menuOpen} setMenuOpen={setMenuOpen} savedOnly={savedOnly} setSavedOnly={setSavedOnly} setVisibleCount={setVisibleCount} savedItems={savedItems} onNavigate={navigate} onLogout={handleLogout} onSell={openSellMessage} />
+        {content}
+        <Footer />
+        {toast && <div className="toast" role="status"><Check size={16} />{toast}</div>}
+      </div>
+    );
+  }
 
   if (currentPath === "/login") {
     return (
@@ -301,6 +310,24 @@ function App() {
   if (currentPath === "/underground") {
     return <UndergroundEntry onNavigate={navigate} />;
   }
+
+  if (currentPath === "/listings/new") {
+    return currentUser
+      ? pageShell(<ListingForm onNavigate={navigate} onSaved={() => { navigate("/my-listings"); setToast("Your listing is live"); }} />)
+      : <Login onNavigate={navigate} onAuthSuccess={setCurrentUser} />;
+  }
+  const editMatch = currentPath.match(/^\/listings\/(\d+)\/edit$/);
+  if (editMatch) {
+    return currentUser
+      ? pageShell(<ListingForm listingId={editMatch[1]} onNavigate={navigate} onSaved={() => { navigate("/my-listings"); setToast("Your changes are saved"); }} />)
+      : <Login onNavigate={navigate} onAuthSuccess={setCurrentUser} />;
+  }
+  const listingMatch = currentPath.match(/^\/listings\/(\d+)$/);
+  if (listingMatch) return pageShell(<ListingDetails listingId={listingMatch[1]} currentUser={currentUser} onNavigate={navigate} onSignIn={() => navigate("/login")} />);
+  if (currentPath === "/my-listings") return currentUser ? pageShell(<MyListings currentUser={currentUser} onNavigate={navigate} />) : <Login onNavigate={navigate} onAuthSuccess={setCurrentUser} />;
+  if (currentPath === "/favorites") return currentUser ? pageShell(<Favorites onNavigate={navigate} />) : <Login onNavigate={navigate} onAuthSuccess={setCurrentUser} />;
+  if (currentPath === "/offers") return currentUser ? pageShell(<Offers onNavigate={navigate} />) : <Login onNavigate={navigate} onAuthSuccess={setCurrentUser} />;
+  if (currentPath === "/inquiries") return currentUser ? pageShell(<Inquiries onNavigate={navigate} />) : <Login onNavigate={navigate} onAuthSuccess={setCurrentUser} />;
 
   return (
     <div className="app-shell">
@@ -412,9 +439,7 @@ function App() {
                   index={index}
                   isSaved={savedItems.includes(listing.id)}
                   onToggleSaved={toggleSaved}
-                  onQuickView={(selectedListing) =>
-                    setToast(`Previewing ${selectedListing.title}`)
-                  }
+                  onQuickView={(selectedListing) => navigate(`/listings/${selectedListing.id}`)}
                 />
               ))}
             </div>

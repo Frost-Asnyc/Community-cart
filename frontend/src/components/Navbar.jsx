@@ -13,6 +13,11 @@ export default function Navbar({
   onSell,
 }) {
   function toggleSavedView() {
+    if (currentUser) {
+      onNavigate("/favorites");
+      setMenuOpen(false);
+      return;
+    }
     setSavedOnly((current) => !current);
     setVisibleCount(8);
     setMenuOpen(false);
@@ -20,13 +25,16 @@ export default function Navbar({
 
   return (
     <header className="site-header">
-      <a className="wordmark" href="#" aria-label="Community-Cart home">
+      <a className="wordmark" href="/" aria-label="Community-Cart home">
         <span className="wordmark-symbol"><span /><span /></span>
         <span>Community-cart<span className="wordmark-light"></span></span>
       </a>
       <nav className={`main-nav ${menuOpen ? "is-open" : ""}`}>
-        <a href="#finds" onClick={() => setMenuOpen(false)}>Explore</a>
-        <a href="#how-it-works" onClick={() => setMenuOpen(false)}>How it works</a>
+        <a href="/#finds" onClick={() => setMenuOpen(false)}>Explore</a>
+        <a href="/#how-it-works" onClick={() => setMenuOpen(false)}>How it works</a>
+        {currentUser && <button type="button" onClick={() => onNavigate("/my-listings")}>My listings</button>}
+        {currentUser && <button type="button" onClick={() => onNavigate("/offers")}>My offers</button>}
+        {currentUser && <button type="button" onClick={() => onNavigate("/inquiries")}>Messages</button>}
         <button
           className={savedOnly ? "nav-saved active" : "nav-saved"}
           type="button"

@@ -1,11 +1,9 @@
 import { ArrowUpRight, Heart, MapPin } from "lucide-react";
 
 function formatPrice(price) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
+  return `KES ${new Intl.NumberFormat("en-KE", {
     maximumFractionDigits: 0,
-  }).format(price);
+  }).format(price || 0)}`;
 }
 
 export default function ListingCard({

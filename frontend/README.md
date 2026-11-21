@@ -1,21 +1,14 @@
-# LocalLoop frontend
+# Community Cart frontend
 
-A responsive React storefront inspired by the high-contrast black and red
-palette, oversized display type, cinematic imagery, and motion in the design
-reference.
+React and Vite storefront for the Flask marketplace API.
 
-## Run locally
+## Start it
 
 ```sh
 npm install
 npm run dev
 ```
 
-The Vite server runs on port 3000. The storefront starts with curated LocalLoop
-demo finds and loads the wider product catalog from DummyJSON. If that catalog
-is unavailable, the curated picks remain available and an on-page notice
-explains the issue.
+By default, the frontend connects to Flask at `http://localhost:5000`. Set `VITE_API_BASE_URL` in `.env.local` to use a different API origin. The backend must allow the frontend origin through CORS and support cookie credentials for account sessions.
 
-Search, category filters, and saved finds work in the browser. Saved finds are
-stored in local storage. Listing creation is a visual placeholder; the Flask
-auth, favorites, and offers endpoints are not implemented yet.
+The app includes browsing, search, saved listings, account registration and login, listing creation and management, private offers, and seller inquiries. Start the Flask API and seed local demo data using the instructions in the repository root README.

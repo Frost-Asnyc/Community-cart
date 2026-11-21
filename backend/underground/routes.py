@@ -5,7 +5,7 @@ from decimal import Decimal
 from bson import ObjectId
 from bson.errors import InvalidId
 from bson.decimal128 import Decimal128
-from flask import Blueprint, jsonify, request, session
+from flask import Blueprint, current_app, jsonify, request, session
 from pymongo.errors import PyMongoError
 from werkzeug.exceptions import BadRequest
 
@@ -20,6 +20,11 @@ from underground.schemas import (
     underground_age_verification_schema,
 )
 from underground.services import get_categories, get_product, search_products
+from underground.mock_catalog import (
+    get_demo_categories,
+    get_demo_product,
+    search_demo_products,
+)
 from marshmallow import ValidationError
 
 log = logging.getLogger(__name__)
@@ -117,8 +122,16 @@ def serialize_product(product):
     }
 
 
-def _database_unavailable():
+def _database_unavailable(configuration_error=False):
     log.exception("Underground MongoDB request failed.")
+    if configuration_error:
+        return jsonify(
+            {
+                "error": "Underground catalog is temporarily unavailable.",
+                "hint": "Set MONGODB_URI in backend/.env, make sure MongoDB is running, and restart Flask.",
+                "code": "underground_database_not_configured",
+            }
+        ), 503
     return jsonify({"error": "Underground catalog is temporarily unavailable."}), 503
 
 
@@ -146,10 +159,15 @@ def products():
         if filters.get(field) is not None:
             filters[field] = filters[field].strip() or None
 
-    try:
-        result = search_products(get_underground_products(), filters)
-    except (UndergroundMongoConfigurationError, PyMongoError):
-        return _database_unavailable()
+    if current_app.config.get("UNDERGROUND_DEMO_MODE"):
+        result = search_demo_products(filters)
+    else:
+        try:
+            result = search_products(get_underground_products(), filters)
+        except UndergroundMongoConfigurationError:
+            return _database_unavailable(configuration_error=True)
+        except PyMongoError:
+            return _database_unavailable()
     result["items"] = [serialize_product(item) for item in result["items"]]
     return jsonify(result), 200
 
@@ -162,10 +180,15 @@ def product_detail(product_id):
     except (InvalidId, TypeError):
         return jsonify({"error": "Invalid product ID."}), 400
 
-    try:
-        product = get_product(get_underground_products(), object_id)
-    except (UndergroundMongoConfigurationError, PyMongoError):
-        return _database_unavailable()
+    if current_app.config.get("UNDERGROUND_DEMO_MODE"):
+        product = get_demo_product(object_id)
+    else:
+        try:
+            product = get_product(get_underground_products(), object_id)
+        except UndergroundMongoConfigurationError:
+            return _database_unavailable(configuration_error=True)
+        except PyMongoError:
+            return _database_unavailable()
 
     if product is None:
         return jsonify({"error": "Underground product not found."}), 404
@@ -175,8 +198,13 @@ def product_detail(product_id):
 @underground_bp.get("/categories")
 @underground_age_required
 def categories():
-    try:
-        items = get_categories(get_underground_products())
-    except (UndergroundMongoConfigurationError, PyMongoError):
-        return _database_unavailable()
+    if current_app.config.get("UNDERGROUND_DEMO_MODE"):
+        items = get_demo_categories()
+    else:
+        try:
+            items = get_categories(get_underground_products())
+        except UndergroundMongoConfigurationError:
+            return _database_unavailable(configuration_error=True)
+        except PyMongoError:
+            return _database_unavailable()
     return jsonify({"items": items}), 200

@@ -117,11 +117,9 @@ const categories = ["Everything", "Home", "Style", "Tech", "Outdoors"];
 const productFeedUrl = "https://dummyjson.com/products?limit=194";
 
 function formatPrice(price) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
+  return `KES ${new Intl.NumberFormat("en-KE", {
     maximumFractionDigits: 0,
-  }).format(price);
+  }).format(price || 0)}`;
 }
 
 function readSavedItems() {

@@ -83,7 +83,7 @@ export async function apiRequest(endpoint, options = {}) {
   if (!response.ok) {
     const message =
       (typeof data === "object" && data !== null
-        ? data.error || data.message
+        ? [data.error || data.message, data.hint].filter(Boolean).join(" ")
         : data) ||
       `Request failed with status ${response.status}`;
 

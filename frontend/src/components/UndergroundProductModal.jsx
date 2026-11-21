@@ -3,11 +3,9 @@ import { ArrowUpRight, ImageOff, X } from "lucide-react";
 import { getUndergroundProduct } from "../services/underground";
 
 function formatPrice(price) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 2,
-  }).format(price);
+  return `KES ${new Intl.NumberFormat("en-KE", {
+    maximumFractionDigits: 0,
+  }).format(price || 0)}`;
 }
 
 export default function UndergroundProductModal({ product, onClose }) {
@@ -16,6 +14,7 @@ export default function UndergroundProductModal({ product, onClose }) {
   const [loading, setLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
   const [attempt, setAttempt] = useState(0);
+  const isDirectoryEstimate = ["Nightlife & Entertainment", "Motorsports"].includes(details.category);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -93,10 +92,8 @@ export default function UndergroundProductModal({ product, onClose }) {
           <h2 id="underground-detail-title">{details.name}</h2>
           <p className="underground-modal-description">{details.description}</p>
           <div className="underground-modal-price-row">
-            <strong>{formatPrice(details.price)}</strong>
-            <span className={details.availability ? "is-available" : "is-unavailable"}>
-              {details.availability ? "Available" : "Demo only · unavailable"}
-            </span>
+            <strong>{formatPrice(details.price)}{isDirectoryEstimate ? " / person" : ""}</strong>
+            <span className="is-available">Available</span>
           </div>
           {loading && (
             <p className="underground-modal-status" role="status">
@@ -118,8 +115,8 @@ export default function UndergroundProductModal({ product, onClose }) {
             </div>
           )}
           <p className="underground-demo-note">
-            A community find, shown for demonstration. No checkout or payment
-            is available in this demo.
+            Please confirm product stock, prices, and venue availability directly
+            before arranging a purchase or reservation.
           </p>
         </div>
       </section>
