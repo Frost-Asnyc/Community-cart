@@ -86,7 +86,7 @@ def get_underground_products():
 
     with _app_lock("underground_product_indexes_lock"):
         if not app.extensions.get("underground_product_indexes_ready"):
-            collection.create_indexes(PRODUCT_INDEXES)
+            collection.create_indexes(list(PRODUCT_INDEXES))
             app.extensions["underground_product_indexes_ready"] = True
 
     return collection

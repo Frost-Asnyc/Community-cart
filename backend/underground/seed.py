@@ -73,7 +73,7 @@ DEMO_PRODUCTS = (
     {
         "seed_key": "alt-fashion-kilimall-black-two-piece-bikini",
         "name": "Women’s Black Halter Two-Piece Bikini Set",
-        "description": "Two-piece swimsuit from a Kilimall Kenya listing. Listed price shown in KES; seller stock and checkout are not connected to this demo API.",
+        "description": "Two-piece swimsuit from a Kilimall Kenya listing. Listed price shown in KES; confirm current stock and purchase details directly with the seller.",
         "price": "600",
         "category": "Alternative Fashion",
         "subcategory": "Two-Piece Swimwear",
@@ -402,7 +402,22 @@ _PRODUCT_IMAGES = {
     "rtd-crown-royal": "https://www.reservebar.com/_next/image?q=75&url=https%3A%2F%2Fassets.liquidcommerce.co%2Fcatalog%2Fpartner%2Fimg%2F42d20f90-eaa9-4335-aba7-565f3603ec1e.jpg&w=1920",
     "rtd-four-loko": "https://cdn11.bigcommerce.com/s-h556z48a5y/images/stencil/1280x1280/products/5610/11579/84980600116__41265.1619118565.jpg?c=1",
     "rtd-seagrams": "https://images.gopuff.com/blob/gopuffcatalogstorageprod/catalog-images-container/resize/cf/version%3D1_2%2Cformat%3Dauto%2Cfit%3Dscale-down%2Cwidth%3D800%2Cheight%3D800/88dab124-f4dd-45d7-a432-7d26a8e023d5-padded.png",
-    "rtd-topo-chico": "https://www.coca-cola.com/content/dam/onexp/gb/en/brands/topo-chico/Product-Information-Topo-Chico-Tangy-Lemon-Lime.jpg"
+    "rtd-topo-chico": "https://www.coca-cola.com/content/dam/onexp/gb/en/brands/topo-chico/Product-Information-Topo-Chico-Tangy-Lemon-Lime.jpg",
+    "streetwear-band-tee": "https://media-assets.grailed.com/prd/listing/43113156/20869745c02f4d8abb638795292de3fb?auto=format",
+    "streetwear-moto-jacket": "https://www.vickyabbeyliquidation.ca/cdn/shop/files/ED944FE3-C41E-4156-84FF-1357ED4EBBFE.jpg?v=1715573186&width=1946",
+    "streetwear-combat-boots": "https://item.elandrs.com/r/image/item/2024-11-03/454e0520-d290-4cf5-bdbc-17dd588f4030.jpg",
+    "analog-turntable": "https://cdn11.bigcommerce.com/s-1xa2dhlu0a/images/stencil/500x659/products/72567/102795/APJTTATMTA1B__39346.1658002535.jpg?c=1",
+    "analog-cassette-pack": "https://images.unsplash.com/photo-1576228290547-b7e32fe598d0?fm=jpg&ixlib=rb-4.0.3&q=80&w=1200",
+    "afterdark-bralette": "https://fielshop.com/cdn/shop/products/black-sexy-perspective-lace-bra-bralettes-sunny-angela-296.jpg?v=1693217584",
+    "afterdark-briefs": "https://image.hm.com/assets/005/be/87/be8707d1ab1dad564e7b2659440c07e9ce536baa.jpg?imwidth=2160",
+    "vape-wenax-aurora-green": "https://ossus.geekvape.com/products/WQP/AuroraGreen.png",
+    "vape-wenax-black": "https://ossus.geekvape.com/products/WQP/Black.png",
+    "vape-wenax-sunburst-gold": "https://ossus.geekvape.com/products/WQP/SunburstGold.png",
+    "vape-wenax-luminous-purple": "https://ossus.geekvape.com/products/WQP/LuminousPurple.png",
+    "vape-wenax-twilight-red": "https://ossus.geekvape.com/products/WQP/TwilightRed.png",
+    "cruise-virgin-miami": "https://virginvoyages.imgix.net/dam/jcr%3A6b35a588-25ca-49c9-8648-4dfd82debcb9/Resilient%20lady-892x1266-tablet.png?auto=format%2Ccompress&fit=max&q=75&w=750",
+    "cruise-virgin-barcelona": "https://virginvoyages.imgix.net/dam/jcr%3A6b35a588-25ca-49c9-8648-4dfd82debcb9/Resilient%20lady-892x1266-tablet.png?auto=format%2Ccompress&fit=max&q=75&w=750",
+    "cruise-virgin-athens": "https://virginvoyages.imgix.net/dam/jcr%3A6b35a588-25ca-49c9-8648-4dfd82debcb9/Resilient%20lady-892x1266-tablet.png?auto=format%2Ccompress&fit=max&q=75&w=750"
 }
 
 _MARKET_PRODUCTS = (
@@ -494,13 +509,43 @@ _MARKET_PRODUCTS = (
     ("rtd-topo-chico", "Topo Chico Tangy Lemon Lime Hard Seltzer", "Mixed Drinks & Hard Seltzers", "Hard Seltzers", "400"),
 )
 
+_ADDITIONAL_MARKET_PRODUCTS = (
+    ("streetwear-band-tee", "Vintage Soundgarden Tour Graphic Tee", "Streetwear & Footwear", "Graphic Tees", "2400"),
+    ("streetwear-moto-jacket", "Black Moto Leather Jacket", "Streetwear & Footwear", "Outerwear", "12500"),
+    ("streetwear-combat-boots", "Black Leather Combat Boots", "Streetwear & Footwear", "Footwear", "9800"),
+    ("analog-turntable", "Black Vinyl Turntable", "Vinyl & Analog", "Turntables", "18500"),
+    ("analog-cassette-pack", "Black Audio Cassette Tape", "Vinyl & Analog", "Cassettes", "900"),
+    ("afterdark-bralette", "Black Lace Bralette", "After Dark Intimates", "Lingerie", "2800"),
+    ("afterdark-briefs", "Black High-Rise Briefs", "After Dark Intimates", "Underwear", "1600"),
+    ("vape-wenax-aurora-green", "Geekvape Wenax Q Pro — Aurora Green", "Vapes & Pod Kits", "Pod Kits", "4200"),
+    ("vape-wenax-black", "Geekvape Wenax Q Pro — Black", "Vapes & Pod Kits", "Pod Kits", "4200"),
+    ("vape-wenax-sunburst-gold", "Geekvape Wenax Q Pro — Sunburst Gold", "Exotic Vapes", "Color-Finish Pod Kits", "4500"),
+    ("vape-wenax-luminous-purple", "Geekvape Wenax Q Pro — Luminous Purple", "Exotic Vapes", "Color-Finish Pod Kits", "4500"),
+    ("vape-wenax-twilight-red", "Geekvape Wenax Q Pro — Twilight Red", "Exotic Vapes", "Color-Finish Pod Kits", "4500"),
+    ("cruise-virgin-miami", "Adults-Only Caribbean Cruise — Miami Departure Request", "Adult-Only Cruises", "Caribbean Voyages", "185000"),
+    ("cruise-virgin-barcelona", "Adults-Only Mediterranean Cruise — Barcelona Departure Request", "Adult-Only Cruises", "Mediterranean Voyages", "225000"),
+    ("cruise-virgin-athens", "Adults-Only Mediterranean Cruise — Athens Departure Request", "Adult-Only Cruises", "Mediterranean Voyages", "215000"),
+)
+_MARKET_PRODUCTS = _ADDITIONAL_MARKET_PRODUCTS + _MARKET_PRODUCTS
+
 DEMO_PRODUCTS += tuple(
     {
         "seed_key": key,
         "name": name,
         "description": (
-            ("Age-restricted alcoholic beverage. " if category in ("Spirits", "Mixed Drinks & Hard Seltzers") else "")
-            + f"Approximate KES {int(price):,} reference price; photo shows the named product. Retail stock and checkout are not connected."
+            (
+                "Age-restricted alcoholic beverage. "
+                if category in ("Spirits", "Mixed Drinks & Hard Seltzers")
+                else "Age-restricted vape device; device only, e-liquid sold separately. Confirm applicable local age and sales rules. "
+                if category in ("Vapes & Pod Kits", "Exotic Vapes")
+                else ""
+            )
+            + (
+                "Adults-only cruise inquiry. This is a request listing, not a confirmed reservation; sailing dates, route, fare, and availability must be confirmed with the operator. "
+                if category == "Adult-Only Cruises"
+                else ""
+            )
+            + f"Approximate KES {int(price):,} reference price; photo shows the named product or experience. Live stock, reservations, and checkout are not connected."
         ),
         "price": price,
         "category": category,
