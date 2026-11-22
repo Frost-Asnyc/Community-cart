@@ -109,7 +109,7 @@ export default function UndergroundEntry({ onNavigate }) {
             <h1 id="underground-title">A different kind of marketplace.</h1>
             <p className="underground-entry-copy">
               Confirm that you’re at least {verification?.minimum_age ?? 18} to
-              enter this demo area.
+              enter this age-restricted area.
             </p>
             <form className="underground-entry-form" onSubmit={handleSubmit}>
               <label htmlFor="underground-age">Your age</label>
@@ -127,8 +127,8 @@ export default function UndergroundEntry({ onNavigate }) {
                 aria-describedby="underground-age-note"
               />
               <p id="underground-age-note" className="underground-entry-note">
-                This is a simulated school-demo check, not proof of age. We
-                don’t ask for or store your birth date.
+                This self-attested age check is not proof of age. We don’t ask
+                for or store your birth date.
               </p>
               {error && <p className="underground-entry-error" role="alert">{error}</p>}
               <button

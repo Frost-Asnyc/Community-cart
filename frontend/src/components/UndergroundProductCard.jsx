@@ -1,4 +1,5 @@
 import { ArrowUpRight, ImageOff, Star } from "lucide-react";
+import { getImageProxyUrl } from "../utils/productImage";
 
 function formatPrice(price) {
   return `KES ${new Intl.NumberFormat("en-KE", {
@@ -6,9 +7,14 @@ function formatPrice(price) {
   }).format(price || 0)}`;
 }
 
-export default function UndergroundProductCard({ product, onSelect }) {
+export default function UndergroundProductCard({ product, onSelect, layoutIndex = 0, revealDelay = 0 }) {
   return (
-    <article className="underground-product-card">
+    <article
+      className="underground-product-card"
+      data-layout-index={layoutIndex % 8}
+      data-scroll-reveal
+      style={{ "--reveal-delay": `${Math.min(revealDelay, 8) * 55}ms` }}
+    >
       <button
         className="underground-product-image"
         type="button"
@@ -21,6 +27,11 @@ export default function UndergroundProductCard({ product, onSelect }) {
             alt=""
             loading="lazy"
             onError={(event) => {
+              if (!event.currentTarget.dataset.proxyAttempted) {
+                event.currentTarget.dataset.proxyAttempted = "true";
+                event.currentTarget.src = getImageProxyUrl(product.image);
+                return;
+              }
               event.currentTarget.hidden = true;
               event.currentTarget.nextElementSibling.hidden = false;
             }}

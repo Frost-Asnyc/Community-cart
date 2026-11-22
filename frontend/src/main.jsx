@@ -7,6 +7,7 @@ import "./styles/shared-components.css";
 import "./styles/underground-entry.css";
 import "./styles/underground.css";
 import "./styles/market-pages.css";
+import "./styles/glitch-theme.css";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>

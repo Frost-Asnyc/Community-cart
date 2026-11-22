@@ -1425,6 +1425,110 @@
   line-height: 1.6;
 }
 
+.underground-phone-form {
+  margin-top: 22px;
+  display: grid;
+  gap: 9px;
+  font-size: 0.78rem;
+}
+
+.underground-phone-form label {
+  color: #34342f;
+  font-weight: 800;
+}
+
+.underground-phone-form input {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 14px;
+  border: 1px solid rgba(23, 23, 23, 0.22);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--ug-ink);
+  font: inherit;
+  letter-spacing: 0.06em;
+}
+
+.underground-phone-form input:focus-visible {
+  outline: 2px solid #83a916;
+  outline-offset: 2px;
+}
+
+.underground-phone-form input[aria-invalid="true"] {
+  border-color: #a13d46;
+}
+
+.underground-phone-help,
+.underground-phone-error {
+  color: #72716b;
+  font-size: 0.68rem;
+}
+
+.underground-phone-error {
+  color: #862e3a;
+}
+
+.underground-phone-submit,
+.underground-welcome-card button {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ug-lime);
+  color: #171717;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.underground-phone-submit:hover,
+.underground-welcome-card button:hover {
+  background: #c6f54a;
+}
+
+.underground-welcome-backdrop {
+  position: fixed;
+  z-index: 60;
+  inset: 0;
+  padding: 20px;
+  display: grid;
+  place-items: center;
+  background: rgba(14, 12, 15, 0.68);
+  backdrop-filter: blur(7px);
+}
+
+.underground-welcome-card {
+  width: min(100%, 390px);
+  padding: 32px;
+  border: 1px solid rgba(195, 234, 79, 0.45);
+  border-radius: 22px;
+  background: #f2f1e9;
+  color: var(--ug-ink);
+  text-align: center;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
+}
+
+.underground-welcome-mark {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ug-lime);
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: 1.7rem;
+}
+
+.underground-welcome-card h2 {
+  margin: 7px 0 24px;
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: clamp(2.4rem, 9vw, 3.3rem);
+  font-weight: 400;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
 .underground-entry {
   font-family: "DM Sans", sans-serif;
 }
@@ -1923,5 +2027,128 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Welcome modal entrance and motion */
+.underground-welcome-backdrop {
+  isolation: isolate;
+  overflow: hidden;
+  animation: underground-welcome-shade-in 420ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+
+.underground-welcome-backdrop::before,
+.underground-welcome-backdrop::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: min(75vw, 560px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(195, 234, 79, 0.25);
+  border-radius: 50%;
+  box-shadow: 0 0 42px rgba(195, 234, 79, 0.12), inset 0 0 42px rgba(195, 234, 79, 0.08);
+  pointer-events: none;
+  animation: underground-welcome-orbit 14s linear infinite;
+}
+
+.underground-welcome-backdrop::after {
+  width: min(105vw, 760px);
+  border-color: rgba(195, 234, 79, 0.12);
+  animation-duration: 22s;
+  animation-direction: reverse;
+}
+
+.underground-welcome-card {
+  position: relative;
+  overflow: hidden;
+  animation: underground-welcome-card-in 720ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.underground-welcome-card::before {
+  content: "";
+  position: absolute;
+  top: -45%;
+  left: -55%;
+  width: 45%;
+  height: 190%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.56), transparent);
+  transform: rotate(22deg);
+  pointer-events: none;
+  animation: underground-welcome-sweep 1.2s 260ms ease-out both;
+}
+
+.underground-welcome-mark {
+  position: relative;
+  animation: underground-welcome-mark-pop 620ms 180ms cubic-bezier(0.2, 1.7, 0.4, 1) both,
+    underground-welcome-mark-glow 2.8s 900ms ease-in-out infinite;
+}
+
+.underground-welcome-mark::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border: 1px solid rgba(131, 169, 22, 0.45);
+  border-radius: inherit;
+  animation: underground-welcome-ring 2.4s 650ms ease-out infinite;
+}
+
+.underground-welcome-card button {
+  transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.underground-welcome-card button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(131, 169, 22, 0.24);
+}
+
+@keyframes underground-welcome-shade-in {
+  from { opacity: 0; backdrop-filter: blur(0); }
+  to { opacity: 1; backdrop-filter: blur(7px); }
+}
+
+@keyframes underground-welcome-card-in {
+  0% { opacity: 0; transform: translateY(34px) scale(0.82) rotateX(12deg); filter: blur(10px); }
+  65% { opacity: 1; transform: translateY(-5px) scale(1.025) rotateX(0); filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) scale(1) rotateX(0); filter: blur(0); }
+}
+
+@keyframes underground-welcome-orbit {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes underground-welcome-sweep {
+  from { left: -55%; opacity: 0; }
+  20% { opacity: 1; }
+  to { left: 120%; opacity: 0; }
+}
+
+@keyframes underground-welcome-mark-pop {
+  from { opacity: 0; transform: scale(0.25) rotate(-45deg); }
+  to { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+@keyframes underground-welcome-mark-glow {
+  0%, 100% { box-shadow: 0 0 0 rgba(195, 234, 79, 0); }
+  50% { box-shadow: 0 0 28px rgba(195, 234, 79, 0.7); }
+}
+
+@keyframes underground-welcome-ring {
+  0% { opacity: 0.7; transform: scale(0.82); }
+  100% { opacity: 0; transform: scale(1.55); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .underground-welcome-backdrop,
+  .underground-welcome-backdrop::before,
+  .underground-welcome-backdrop::after,
+  .underground-welcome-card,
+  .underground-welcome-card::before,
+  .underground-welcome-mark,
+  .underground-welcome-mark::after {
+    animation: none !important;
+  }
+
+  .underground-welcome-card button {
+    transition: none;
   }
 }
